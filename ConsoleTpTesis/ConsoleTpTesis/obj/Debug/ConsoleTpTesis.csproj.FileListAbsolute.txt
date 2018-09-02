@@ -12,3 +12,10 @@ C:\Users\lanacondio\Desktop\ConsoleTpTesis\ConsoleTpTesis\obj\Debug\ConsoleTpTes
 C:\Users\lanacondio\Desktop\ConsoleTpTesis\ConsoleTpTesis\bin\Debug\ConsoleTpTesis.exe.config
 C:\Users\lanacondio\Desktop\ConsoleTpTesis\ConsoleTpTesis\bin\Debug\ConsoleTpTesis.exe
 C:\Users\lanacondio\Desktop\ConsoleTpTesis\ConsoleTpTesis\bin\Debug\ConsoleTpTesis.pdb
+C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\bin\Debug\ConsoleTpTesis.exe.config
+C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\bin\Debug\ConsoleTpTesis.exe
+C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\bin\Debug\ConsoleTpTesis.pdb
+C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\obj\Debug\ConsoleTpTesis.csprojResolveAssemblyReference.cache
+C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\obj\Debug\ConsoleTpTesis.csproj.CoreCompileInputs.cache
+C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\obj\Debug\ConsoleTpTesis.exe
+C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\obj\Debug\ConsoleTpTesis.pdb

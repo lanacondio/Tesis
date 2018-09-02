@@ -13,5 +13,6 @@ namespace ConsoleTpTesis.Models
         public int Cost { get; set; }
         public int Demand { get; set; }
         public int Profit { get; set; }
+        public double ROI { get; set; }
     }
 }

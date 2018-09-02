@@ -10,12 +10,21 @@ namespace ConsoleTpMetaheuristica.Services
 {
     public class GraspService
     {
-        
+        private static bool Finished { get; set; }
+
         private static Random r = new Random();
-        public void GetResult(GraphEnvironment matrix)
+        public void GetResult(GraphEnvironment environment)
         {
-            var result = matrix;
-            
+            this.CalculateInitialROI(environment);
+            var result = environment;
+
+            var truksToRoad = environment.Trucks;
+            while (!Finished)
+            {
+                //trucksToRoad
+            }
+
+
             var maxSeeds = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
             
             //var seeds = new  List<Matrix>();
@@ -83,7 +92,7 @@ namespace ConsoleTpMetaheuristica.Services
         //    var randomPercentage = int.Parse(ConfigurationManager.AppSettings["RandomPercentage"]);
         //    var resultLenght = int.Parse(Math.Round((decimal)(matrix.Rows.Count * randomPercentage / 100)).ToString());
         //    var possibleResults = new Dictionary<int, List<int>>();
-            
+
         //    var resultValue = this.EvaluateColumn(lowerIndex, upperIndex, matrix, lowerIndex);
         //    var actualLenghtResults = 1;
 
@@ -117,19 +126,19 @@ namespace ConsoleTpMetaheuristica.Services
         //                {
         //                    possibleResults.Add(columnValue, new List<int>() { i });
         //                }
-                                                
+
         //            }
         //        }
         //    }
 
-            
+
         //    int resultKeyIndex = r.Next(0, possibleResults.Keys.Count);
         //    var key = possibleResults.Keys.ToArray()[resultKeyIndex];
         //    var resultIndex = possibleResults[key];
         //    var result = 0;
         //    if (resultIndex.Count > 1)
         //    {
-            
+
         //        int xIndex = r.Next(0, resultIndex.Count);
         //        result = resultIndex[xIndex];
         //    }
@@ -149,6 +158,27 @@ namespace ConsoleTpMetaheuristica.Services
         //    }
         //    return sum;
         //}
-        
+
+        private bool CanVisit(Truck truck, Graph graph, Node dest)
+        {
+            var origin = truck.Travel.Last();
+
+            var fstNode = origin.Id < dest.Id ? origin : dest;
+            var sndNode = origin.Id == fstNode.Id ? dest : origin;
+
+            var arc = graph.Arcs.Where(x => x.first.Id == fstNode.Id && x.second.Id == sndNode.Id).FirstOrDefault();
+            return arc != null && arc.Cost <= truck.TimeLimit && arc.Demand <= truck.Capacity;
+
+        }
+
+        public void CalculateInitialROI(GraphEnvironment environment)
+        {
+            foreach(var arc in environment.Graph.Arcs)
+            {
+                arc.ROI = arc.Profit / arc.Cost + arc.Demand;
+            }
+            
+        }
+
     }
 }

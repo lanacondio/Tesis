@@ -29,7 +29,8 @@ namespace ConsoleTpTesis.Services
             {
                 var truck = new Truck()
                 {
-                    Id = i
+                    Id = i,
+                    ActualNode = 0
                 };
                 trucks.Add(truck);
             }
@@ -39,7 +40,7 @@ namespace ConsoleTpTesis.Services
             {
                 int lineNumber = 0;
                 string line;
-                while ((line = reader.ReadLine()) != null)
+                while ((line = reader.ReadLine()) != null && !line.Contains("DEPOT"))
                 {
                     if (line != string.Empty)
                     {
