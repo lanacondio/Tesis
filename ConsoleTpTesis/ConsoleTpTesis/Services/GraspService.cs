@@ -16,17 +16,21 @@ namespace ConsoleTpMetaheuristica.Services
         public void GetResult(GraphEnvironment environment)
         {
             this.CalculateInitialROI(environment);
+
             var result = environment;
 
-            var truksToRoad = environment.Trucks;
+            var trucksToRoad = environment.Trucks;
+
             while (!Finished)
             {
-                //trucksToRoad
+                foreach(var truck in environment.Trucks)
+                {
+                    this.MakeNextStep(truck, environment.Graph);
+                }
+            
             }
 
 
-            var maxSeeds = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
-            
             //var seeds = new  List<Matrix>();
             //var results = new List<Matrix>();
 
@@ -86,7 +90,24 @@ namespace ConsoleTpMetaheuristica.Services
         //    return resultIndex;
         //}
 
-        //public int GetBestColumnIndexBetweenWithRandomPercentage(int lowerIndex, int upperIndex, Matrix matrix)
+        private Arc GetBestsArcsWithRandomPercentage(IList<Arc> arcs)
+        {
+            var randomPercentage = int.Parse(ConfigurationManager.AppSettings["RandomPercentage"]);
+            var resultLenght = int.Parse(Math.Round((decimal)(arcs.Count * randomPercentage / 100)).ToString());
+
+            var bestPercentage = arcs.OrderByDescending(x => x.ROI).Take(resultLenght).ToList();
+
+            var result = GetRandomArcFromList(bestPercentage);
+            return result;
+        }
+
+        private Arc GetRandomArcFromList(IList<Arc> arcs)
+        {
+            int idx = r.Next(arcs.Count);
+            return arcs[idx];
+        }
+
+        //public int GetBestsArcsWithRandomPercentage(int lowerIndex, int upperIndex, Matrix matrix)
         //{
 
         //    var randomPercentage = int.Parse(ConfigurationManager.AppSettings["RandomPercentage"]);
@@ -176,8 +197,25 @@ namespace ConsoleTpMetaheuristica.Services
             foreach(var arc in environment.Graph.Arcs)
             {
                 arc.ROI = arc.Profit / arc.Cost + arc.Demand;
-            }
-            
+            }            
+        }
+
+        private void MakeNextStep(Truck truck, Graph graph)
+        {
+            var nextArcs = GetNextArcs(truck.ActualNode, graph.Arcs);
+            var availableArcs = nextArcs.Where(x => this.CanVisit(truck, graph, x.first.Id == truck.ActualNode ? x.second : x.first)).ToList();
+            var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs);
+
+            truck.AddToTravel(bestArc);
+
+
+        }
+
+        
+
+        private IList<Arc> GetNextArcs(int nodeId, IList<Arc> arcs)
+        {
+            return arcs.Where(x => x.first.Id == nodeId || x.second.Id == nodeId).ToList();
         }
 
     }
