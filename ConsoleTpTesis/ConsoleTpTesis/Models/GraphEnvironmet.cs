@@ -11,5 +11,6 @@ namespace ConsoleTpTesis.Models
         public Graph Graph { get; set; }
         public IList<Truck> Trucks { get; set; }
 
+        public int AccumulatedProfit { get; set; }
     }
 }

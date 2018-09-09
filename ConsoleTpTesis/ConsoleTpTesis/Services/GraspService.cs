@@ -11,7 +11,7 @@ namespace ConsoleTpMetaheuristica.Services
     public class GraspService
     {
         private static bool Finished { get; set; }
-
+        private static int AccumulatedProfit { get; set; }
         private static Random r = new Random();
         public void GetResult(GraphEnvironment environment)
         {
@@ -23,82 +23,51 @@ namespace ConsoleTpMetaheuristica.Services
 
             while (!Finished)
             {
-                foreach(var truck in environment.Trucks)
+                foreach(var truck in trucksToRoad)
                 {
                     this.MakeNextStep(truck, environment.Graph);
                 }
+
+                CheckStatus(trucksToRoad);
             
             }
 
-
-            //var seeds = new  List<Matrix>();
-            //var results = new List<Matrix>();
-
-            //for (int i = 0; i < maxSeeds; i++)
-            //{
-            //    var seed = this.MakeSeed(matrix);                
-            //    seeds.Add(seed);
-                
-            //}
-
-            //Parallel.ForEach(seeds, (actualSeed) =>
-            //{
-            //    var worker = new LocalSearchWorker(actualSeed);
-            //    worker.Run();
-            //    results.Add(worker.resultSeed);
-            //});
-
-
-            //result = this.GetBest(results);
-            //return result;
+            environment.AccumulatedProfit = AccumulatedProfit;
         }
+        
 
-        //public Matrix GetBest(List<Matrix> results)
-        //{
-        //    var result = results[0];
-
-        //    for (int i = 1; i < results.Count; i++)
-        //    {
-        //        if (results[i].IsBetter(result)) result = results[i];
-        //    }
-
-        //    return result;
-        //}
-
-        //public Matrix MakeSeed(Matrix matrix)
-        //{
-        //    var result = matrix.Clone();
-        //    for (int i = result.Rows.Count - 1; i > 0; i--)
-        //    {               
-        //        var bestColumnIndex = GetBestColumnIndexBetweenWithRandomPercentage(0, i, result);
-        //        result.Permute(bestColumnIndex, i);
-        //    }
-
-        //    return result;
-
-        //}
-
-        //public int GetBestColumnIndexBetween(int lowerIndex, int upperIndex, Matrix matrix)
-        //{
-        //    var resultIndex = lowerIndex;
-        //    var resultValue = this.EvaluateColumn(lowerIndex, upperIndex, matrix, lowerIndex);
-        //    for (int i = lowerIndex; i < upperIndex; i++)
-        //    {
-        //        var columnValue = this.EvaluateColumn(lowerIndex, upperIndex, matrix, i);
-        //        if (columnValue > resultValue) resultIndex = i;
-        //    }
-        //    return resultIndex;
-        //}
+        private void CheckStatus(IList<Truck> trucks)
+        {
+            trucks = trucks.Where(x => !x.IsFinished).ToList();
+            Finished = trucks.Count == 0;
+        }
 
         private Arc GetBestsArcsWithRandomPercentage(IList<Arc> arcs)
         {
-            var randomPercentage = int.Parse(ConfigurationManager.AppSettings["RandomPercentage"]);
-            var resultLenght = int.Parse(Math.Round((decimal)(arcs.Count * randomPercentage / 100)).ToString());
+            Arc result = null;
+            try
+            {
+                var randomPercentage = int.Parse(ConfigurationManager.AppSettings["RandomPercentage"]);
+                var resultLenght = int.Parse(Math.Round((decimal)(arcs.Count * randomPercentage / 100)).ToString());
+                
+                var bestPercentage = arcs.OrderByDescending(x => x.ROI).Take(resultLenght).ToList();
+                if(bestPercentage.Count == 0 && arcs.Count >0)
+                {
+                    result = arcs.FirstOrDefault();
+                }
+                else
+                {
+                    result = GetRandomArcFromList(bestPercentage);
+                }
+                
+                return result;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            
 
-            var bestPercentage = arcs.OrderByDescending(x => x.ROI).Take(resultLenght).ToList();
-
-            var result = GetRandomArcFromList(bestPercentage);
-            return result;
         }
 
         private Arc GetRandomArcFromList(IList<Arc> arcs)
@@ -106,80 +75,7 @@ namespace ConsoleTpMetaheuristica.Services
             int idx = r.Next(arcs.Count);
             return arcs[idx];
         }
-
-        //public int GetBestsArcsWithRandomPercentage(int lowerIndex, int upperIndex, Matrix matrix)
-        //{
-
-        //    var randomPercentage = int.Parse(ConfigurationManager.AppSettings["RandomPercentage"]);
-        //    var resultLenght = int.Parse(Math.Round((decimal)(matrix.Rows.Count * randomPercentage / 100)).ToString());
-        //    var possibleResults = new Dictionary<int, List<int>>();
-
-        //    var resultValue = this.EvaluateColumn(lowerIndex, upperIndex, matrix, lowerIndex);
-        //    var actualLenghtResults = 1;
-
-        //    possibleResults.Add(resultValue, new List<int>() { lowerIndex });
-
-        //    for (int i = lowerIndex; i < upperIndex; i++)
-        //    {
-        //        var columnValue = this.EvaluateColumn(lowerIndex, upperIndex, matrix, i);
-        //        if (actualLenghtResults < resultLenght)
-        //        {
-        //            if (possibleResults.ContainsKey(columnValue))
-        //            {
-        //                possibleResults[columnValue].Add(i);
-        //            }
-        //            else
-        //            {
-        //                possibleResults.Add(columnValue, new List<int>() { i });
-        //            }
-        //            actualLenghtResults++;
-        //        }
-        //        else
-        //        {
-        //            if (columnValue > possibleResults.Keys.Min())
-        //            {
-        //                possibleResults.Remove(possibleResults.Keys.Min());
-        //                if (possibleResults.ContainsKey(columnValue))
-        //                {
-        //                    possibleResults[columnValue].Add(i);
-        //                }
-        //                else
-        //                {
-        //                    possibleResults.Add(columnValue, new List<int>() { i });
-        //                }
-
-        //            }
-        //        }
-        //    }
-
-
-        //    int resultKeyIndex = r.Next(0, possibleResults.Keys.Count);
-        //    var key = possibleResults.Keys.ToArray()[resultKeyIndex];
-        //    var resultIndex = possibleResults[key];
-        //    var result = 0;
-        //    if (resultIndex.Count > 1)
-        //    {
-
-        //        int xIndex = r.Next(0, resultIndex.Count);
-        //        result = resultIndex[xIndex];
-        //    }
-        //    else
-        //    {
-        //        result = resultIndex[0];
-        //    }
-        //    return result;
-        //}
-
-        //public int EvaluateColumn(int lowerIndex, int upperIndex, Matrix matrix, int columnIndex)
-        //{
-        //    var sum = 0;
-        //    for (int i = lowerIndex; i < upperIndex; i++)
-        //    {
-        //        sum += matrix.Rows[i][columnIndex];
-        //    }
-        //    return sum;
-        //}
-
+        
         private bool CanVisit(Truck truck, Graph graph, Node dest)
         {
             var origin = truck.Travel.Last();
@@ -204,13 +100,19 @@ namespace ConsoleTpMetaheuristica.Services
         {
             var nextArcs = GetNextArcs(truck.ActualNode, graph.Arcs);
             var availableArcs = nextArcs.Where(x => this.CanVisit(truck, graph, x.first.Id == truck.ActualNode ? x.second : x.first)).ToList();
-            var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs);
 
-            truck.AddToTravel(bestArc);
-
-
+            if(availableArcs.Count > 0)
+            {
+                var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs);
+                AccumulatedProfit += bestArc.Profit;
+                truck.AddToTravel(bestArc);
+            }
+            else
+            {
+                truck.IsFinished = true;
+            }
+            
         }
-
         
 
         private IList<Arc> GetNextArcs(int nodeId, IList<Arc> arcs)

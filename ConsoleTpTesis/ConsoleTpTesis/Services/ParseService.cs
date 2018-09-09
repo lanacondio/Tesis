@@ -30,7 +30,8 @@ namespace ConsoleTpTesis.Services
                 var truck = new Truck()
                 {
                     Id = i,
-                    ActualNode = 0
+                    ActualNode = 1,
+                    Travel = new List<Node>()
                 };
                 trucks.Add(truck);
             }
@@ -93,6 +94,9 @@ namespace ConsoleTpTesis.Services
                 }
                 
             }
+
+            trucks.ForEach(x => x.Travel.Add(graph.Nodes.Where(y => y.Id == x.ActualNode).FirstOrDefault()));
+
             return new GraphEnvironment()
             {
                 Graph = graph,

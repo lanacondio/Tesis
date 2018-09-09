@@ -25,7 +25,9 @@ namespace ConsoleTpMetaheuristica
                 DijkstraShortestRouteService.CalculateShortestRoute(environment.Graph);
                 GraspService GraspService = new GraspService();
                 GraspService.GetResult(environment);
-                
+                Console.WriteLine("\n");
+                Console.WriteLine("Accumulated Profit: " + environment.AccumulatedProfit.ToString());
+                Console.ReadLine();
 
             }
             catch (Exception ex)
