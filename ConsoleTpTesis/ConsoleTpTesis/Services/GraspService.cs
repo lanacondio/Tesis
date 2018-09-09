@@ -90,9 +90,11 @@ namespace ConsoleTpMetaheuristica.Services
 
         public void CalculateInitialROI(GraphEnvironment environment)
         {
+            var costRelation = int.Parse(ConfigurationManager.AppSettings["CostRelation"]);
+            var demandRelation = 100 - costRelation;
             foreach(var arc in environment.Graph.Arcs)
             {
-                arc.ROI = arc.Profit / arc.Cost + arc.Demand;
+                arc.ROI = ((arc.Profit / arc.Cost) * costRelation / 100)   + ((arc.Profit / arc.Demand) * demandRelation / 100);
             }            
         }
 
