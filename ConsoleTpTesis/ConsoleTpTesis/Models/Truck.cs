@@ -15,19 +15,27 @@ namespace ConsoleTpTesis.Models
         public List<Node> Travel { get; set; }
         public bool IsFinished { get; set; }
 
-        public void AddToTravel(Arc arc)
+        public int AddToTravel(Arc arc)
         {
+            var result = 0;
             var nodeToAdd = arc.first.Id == ActualNode ? arc.second : arc.first;
 
             this.Travel.Add(nodeToAdd);
             this.ActualNode = nodeToAdd.Id;
-            this.Capacity -= arc.Demand;
+
             this.TimeLimit -= arc.Cost;
-            
-            arc.Profit = 0;
-            arc.Demand = 0;
-            arc.ROI = 0;
-            
+
+            if (arc.Demand <= this.Capacity)
+            {
+                this.Capacity -= arc.Demand;
+                result = arc.Profit;
+                arc.Profit = 0;
+                arc.Demand = 0;
+                arc.ROI = 0;
+
+            }
+
+            return result;            
         }
     }
 }

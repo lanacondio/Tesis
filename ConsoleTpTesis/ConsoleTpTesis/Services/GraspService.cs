@@ -51,7 +51,7 @@ namespace ConsoleTpMetaheuristica.Services
                 var resultLenght = int.Parse(Math.Round((decimal)(arcs.Count * randomPercentage / 100)).ToString());
                 
                 var bestPercentage = arcs.OrderByDescending(x => x.ROI).Take(resultLenght).ToList();
-                if(bestPercentage.Count == 0 && arcs.Count >0)
+                if(bestPercentage.Count == 0)
                 {
                     result = arcs.FirstOrDefault();
                 }
@@ -84,7 +84,7 @@ namespace ConsoleTpMetaheuristica.Services
             var sndNode = origin.Id == fstNode.Id ? dest : origin;
 
             var arc = graph.Arcs.Where(x => x.first.Id == fstNode.Id && x.second.Id == sndNode.Id).FirstOrDefault();
-            return arc != null && arc.Cost <= truck.TimeLimit && arc.Demand <= truck.Capacity;
+            return arc != null && arc.Cost <= truck.TimeLimit && dest.ShortestRoute <= (truck.TimeLimit - arc.Cost);  //arc <= truck.Capacity;
 
         }
 
@@ -106,8 +106,7 @@ namespace ConsoleTpMetaheuristica.Services
             if(availableArcs.Count > 0)
             {
                 var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs);
-                AccumulatedProfit += bestArc.Profit;
-                truck.AddToTravel(bestArc);
+                AccumulatedProfit += truck.AddToTravel(bestArc);
             }
             else
             {
