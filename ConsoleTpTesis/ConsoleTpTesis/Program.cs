@@ -27,14 +27,7 @@ namespace ConsoleTpMetaheuristica
                 GraspService.GetResult(environment);
                 Console.WriteLine("\n");
                 Console.WriteLine("Accumulated Profit: " + environment.AccumulatedProfit.ToString());
-                
-                foreach(var truck in environment.Trucks)
-                {
-                    Console.WriteLine("\n");
-                    Console.WriteLine("Truck" + truck.Id+" :");
-                    truck.Travel.ForEach(x => Console.WriteLine(x.Id.ToString()));
-
-                }
+               
                 Console.ReadLine();
             }
             catch (Exception ex)

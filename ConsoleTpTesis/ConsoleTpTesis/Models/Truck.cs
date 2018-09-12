@@ -37,5 +37,14 @@ namespace ConsoleTpTesis.Models
 
             return result;            
         }
+
+        public void PrintStatus()
+        {
+            Console.WriteLine("Truck " + this.Id+ " Capacity: " +this.Capacity+" TimeLimit: "+this.TimeLimit);            
+            Console.WriteLine("Travel: ");
+            this.Travel.Select(x => x.Id).ToList().ForEach(x => Console.Write(x + "->"));
+            Console.WriteLine("\n");
+            Console.WriteLine("===============");
+        }
     }
 }

@@ -14,5 +14,13 @@ namespace ConsoleTpTesis.Models
         public int Demand { get; set; }
         public int Profit { get; set; }
         public double ROI { get; set; }
+
+        public void Print()
+        {
+            Console.WriteLine("\n");
+            Console.WriteLine("===============");
+            Console.WriteLine("Selected Arc: -C:"+this.Cost+" -D: "+this.Demand+" -P:"+this.Profit+" -ROI: "+this.ROI );
+            
+        }
     }
 }

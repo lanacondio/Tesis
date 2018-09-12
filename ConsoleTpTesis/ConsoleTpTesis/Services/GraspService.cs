@@ -26,6 +26,7 @@ namespace ConsoleTpMetaheuristica.Services
                 foreach(var truck in trucksToRoad)
                 {
                     this.MakeNextStep(truck, environment.Graph);
+                    truck.PrintStatus();
                 }
 
                 CheckStatus(trucksToRoad);
@@ -106,6 +107,7 @@ namespace ConsoleTpMetaheuristica.Services
             if(availableArcs.Count > 0)
             {
                 var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs);
+                bestArc.Print();
                 AccumulatedProfit += truck.AddToTravel(bestArc);
             }
             else
