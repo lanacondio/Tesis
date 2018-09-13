@@ -17,9 +17,8 @@ namespace ConsoleTpTesis.Models
 
         public void Print()
         {
-            Console.WriteLine("\n");
-            Console.WriteLine("===============");
-            Console.WriteLine("Selected Arc: -C:"+this.Cost+" -D: "+this.Demand+" -P:"+this.Profit+" -ROI: "+this.ROI );
+          
+            Console.WriteLine(this.first.Id.ToString()+"----C:"+this.Cost+"--D:"+this.Demand+"--P:"+this.Profit+"--ROI:"+this.ROI+"---->"+ this.second.Id.ToString());
             
         }
     }

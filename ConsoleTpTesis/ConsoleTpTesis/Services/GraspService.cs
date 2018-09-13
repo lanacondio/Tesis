@@ -52,13 +52,18 @@ namespace ConsoleTpMetaheuristica.Services
                 var resultLenght = int.Parse(Math.Round((decimal)(arcs.Count * randomPercentage / 100)).ToString());
                 
                 var bestPercentage = arcs.OrderByDescending(x => x.ROI).Take(resultLenght).ToList();
+                Console.WriteLine("\n");
+                Console.WriteLine("Mejores arcos: ");
+                bestPercentage.ForEach(x => x.Print());
+
                 if(bestPercentage.Count == 0)
                 {
                     result = arcs.FirstOrDefault();
                 }
                 else
-                {
-                    //fix para arcos repetidos
+                {                    
+                    //fix para arcos repetidos                    
+
                     if (travel.Count > 1)
                     {
                         var lastNodes = travel.Reverse().Take(2).ToList();
@@ -127,6 +132,8 @@ namespace ConsoleTpMetaheuristica.Services
             if(availableArcs.Count > 0)
             {
                 var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs, truck.Travel);
+                Console.WriteLine("\n");
+                Console.WriteLine("Arco seleccionado:");
                 bestArc.Print();
                 AccumulatedProfit += truck.AddToTravel(bestArc);
             }
