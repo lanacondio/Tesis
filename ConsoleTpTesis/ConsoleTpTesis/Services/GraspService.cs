@@ -43,7 +43,7 @@ namespace ConsoleTpMetaheuristica.Services
             Finished = trucks.Count == 0;
         }
 
-        private Arc GetBestsArcsWithRandomPercentage(IList<Arc> arcs)
+        private Arc GetBestsArcsWithRandomPercentage(IList<Arc> arcs, IList<Node> travel)
         {
             Arc result = null;
             try
@@ -58,6 +58,26 @@ namespace ConsoleTpMetaheuristica.Services
                 }
                 else
                 {
+                    //fix para arcos repetidos
+                    if (travel.Count > 1)
+                    {
+                        var lastNodes = travel.Reverse().Take(2).ToList();
+                        
+                        if (bestPercentage.Count > 1 )                                                
+                        {
+                            var repitedArc = bestPercentage.Where(x =>
+                                (x.first.Id == lastNodes.First().Id || x.first.Id == lastNodes.Last().Id) &&
+                                (x.second.Id == lastNodes.First().Id || x.second.Id == lastNodes.Last().Id))
+                                .FirstOrDefault();
+
+                            if(repitedArc != null)
+                            {
+                                bestPercentage.Remove(repitedArc);
+                            }
+                            
+                        }
+                    }
+                   
                     result = GetRandomArcFromList(bestPercentage);
                 }
                 
@@ -106,7 +126,7 @@ namespace ConsoleTpMetaheuristica.Services
 
             if(availableArcs.Count > 0)
             {
-                var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs);
+                var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs, truck.Travel);
                 bestArc.Print();
                 AccumulatedProfit += truck.AddToTravel(bestArc);
             }
