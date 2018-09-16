@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -51,7 +52,7 @@ namespace ConsoleTpTesis.Services
                             var arc = ParseArc(data[0], graph);
                             arc.Cost = int.Parse(data[2]);
                             arc.Demand = int.Parse(data[4]);                          
-                            arc.Profit = (int)Math.Round(double.Parse(data[6]));
+                            arc.Profit = (int)Math.Round(double.Parse(data[6], CultureInfo.InvariantCulture));
                             graph.Arcs.Add(arc);
 
                         }
