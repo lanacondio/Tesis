@@ -32,8 +32,7 @@ namespace ConsoleTpMetaheuristica.Services
                 AccumulatedProfit = 0;
                 this.MakeSeedResult(env);
             }
-
-          
+            
 
             Parallel.ForEach(seedsResult, (actualSeed) =>
             {
