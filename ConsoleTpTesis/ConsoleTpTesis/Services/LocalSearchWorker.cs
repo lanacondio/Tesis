@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleTpTesis.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace ConsoleTpMetaheuristica.Services
 {
     public class LocalSearchWorker
     {
-        public Matrix resultSeed;
+        public GraphEnvironment resultSeed;
         private static Random r = new Random();
-        public LocalSearchWorker(Matrix seed)
+        public LocalSearchWorker(GraphEnvironment seed)
         {
             this.resultSeed = seed;
         }
@@ -28,13 +29,77 @@ namespace ConsoleTpMetaheuristica.Services
             
         }
 
-        public Matrix MakeLocalSolution(Matrix matrix)
+        public GraphEnvironment MakeLocalSolution(GraphEnvironment environment)
         {
-            var result = matrix.Clone();
-            int sourceIndex = r.Next(0, result.Rows.Count);
-            var destIndex = r.Next(0, result.Rows.Count);
-            result = result.Permute( sourceIndex, destIndex);
+            var result = environment.Clone();
+
+            var randomTruck = environment.Trucks[r.Next(0, environment.Trucks.Count)];
+            var randomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
+            var randomArc = randomTruck.ArcsTravel[randomArcIndex];
+
+            randomTruck.ArcsTravel.Remove(randomArc);
+
+            //devolver lista de arcos con camino de first a second
+            IList<Arc> newRoad = this.GetRoadFromTo(randomArc.first, randomArc.second);
+
+            var firstRoad = randomTruck.ArcsTravel.Take(randomArcIndex-1);
+            var sndRoad = randomTruck.ArcsTravel.Skip(randomArcIndex-1);
+
+            sndRoad = newRoad.Concat(sndRoad);
+            var finalArcRoad = firstRoad.Concat(sndRoad);
+            randomTruck.ArcsTravel = finalArcRoad.ToList();
+
+            this.RemakeNodeTravel(randomTruck);
+
+            //checkear environment
+            if (!IsFeasible(environment)) { result = null; }
+
             return result;
+            
+        }
+
+
+        private bool IsFeasible(GraphEnvironment environment)
+        {
+            var result = true;
+            
+            foreach(var truck in environment.Trucks)
+            {
+                if (!IsValidTravel(truck, environment)) return false ;
+            }
+            
+            return result;
+        }
+
+        private bool IsValidTravel(Truck truck,  GraphEnvironment environment)
+        {
+            var totalcost = truck.ArcsTravel.Sum(x => x.Cost);
+            var totaldemand = truck.ArcsTravel.Sum(x => x.Demand);
+
+            return truck.Capacity <= totaldemand && truck.TimeLimit <= totalcost;
+        }
+
+
+        private void RemakeNodeTravel(Truck truck)
+        {
+
+            var result = new List<Node>();
+
+            truck.ArcsTravel.ForEach(x=> 
+            {
+                if (truck.ArcsTravel.IndexOf(x) == 0)
+                {
+                    result.Add(x.first);
+                    result.Add(x.second);
+                }
+                else
+                {
+                    result.Add(x.second);
+                }
+                
+            });
+
+            truck.Travel = result;
 
         }
 

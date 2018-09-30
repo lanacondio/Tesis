@@ -16,26 +16,61 @@ namespace ConsoleTpMetaheuristica.Services
         public void GetResult(GraphEnvironment environment)
         {
             this.CalculateInitialROI(environment);
+            
+            var seedsQuantity = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
 
-            var result = environment;
+            var seedsResult = new List<GraphEnvironment>();
 
+            for (int i = 0; i<seedsQuantity; i++)
+            {
+                var auxEnv = environment;
+                seedsResult.Add(auxEnv);
+            }
+
+            foreach(var env in seedsResult)
+            {
+                AccumulatedProfit = 0;
+                this.MakeSeedResult(env);
+            }
+
+          
+
+            Parallel.ForEach(seedsResult, (actualSeed) =>
+            {
+                var worker = new LocalSearchWorker(actualSeed);
+                worker.Run();
+                results.Add(worker.resultSeed);
+            });
+
+
+            result = this.GetBest(results);
+            return result;
+
+
+            environment.AccumulatedProfit = AccumulatedProfit;
+        }
+        
+
+        private void MakeSeedResult(GraphEnvironment environment)
+        {
+            Finished = false;
+            
             var trucksToRoad = environment.Trucks;
 
             while (!Finished)
             {
-                foreach(var truck in trucksToRoad)
+                foreach (var truck in trucksToRoad)
                 {
                     this.MakeNextStep(truck, environment.Graph);
                     truck.PrintStatus();
                 }
 
                 CheckStatus(trucksToRoad);
-            
             }
 
             environment.AccumulatedProfit = AccumulatedProfit;
+
         }
-        
 
         private void CheckStatus(IList<Truck> trucks)
         {
@@ -125,7 +160,7 @@ namespace ConsoleTpMetaheuristica.Services
                 double cost = arc.Cost;
                 double demand = arc.Demand;
 
-                arc.ROI = ((profit / cost) * costRelation / 100)   + ((profit / demand) * demandRelation / 100);
+                arc.ROI = ((profit / cost) * costRelation )   + ((profit / demand) * demandRelation);
             }            
         }
 

@@ -13,13 +13,14 @@ namespace ConsoleTpTesis.Models
         public int TimeLimit { get; set; }
         public int ActualNode { get; set; }
         public List<Node> Travel { get; set; }
+        public List<Arc> ArcsTravel { get; set; }
         public bool IsFinished { get; set; }
 
         public int AddToTravel(Arc arc)
         {
             var result = 0;
             var nodeToAdd = arc.first.Id == ActualNode ? arc.second : arc.first;
-
+            this.ArcsTravel.Add(arc);
             this.Travel.Add(nodeToAdd);
             this.ActualNode = nodeToAdd.Id;
 
