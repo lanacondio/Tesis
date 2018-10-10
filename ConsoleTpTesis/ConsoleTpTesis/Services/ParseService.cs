@@ -32,7 +32,8 @@ namespace ConsoleTpTesis.Services
                 {
                     Id = i,
                     ActualNode = 1,
-                    Travel = new List<Node>()
+                    Travel = new List<Node>(),
+                    ArcsTravel = new List<Arc>()
                 };
                 trucks.Add(truck);
             }

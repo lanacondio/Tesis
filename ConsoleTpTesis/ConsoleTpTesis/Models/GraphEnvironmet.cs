@@ -30,7 +30,7 @@ namespace ConsoleTpTesis.Models
                     this.SimulateNextStep(truck, other.Graph, iterationNumber);                    
                 }
 
-                CheckStatus(trucksToRoad);
+                finished = CheckStatus(trucksToRoad, iterationNumber);
                 iterationNumber++;
             }
 
@@ -44,13 +44,16 @@ namespace ConsoleTpTesis.Models
 
         public void SimulateNextStep(Truck truck, Graph graph, int iterationNumber)
         {
-            if (iterationNumber <= truck.ArcsTravel.Count)
+            if (iterationNumber < truck.ArcsTravel.Count)
             {
                 var arcToSimulate = truck.ArcsTravel[iterationNumber];
+                AccumulatedProfit += truck.AddSimulatedArcToTravel(arcToSimulate);
+            }           
+        }
 
-
-            }
-            
+        private bool CheckStatus(IList<Truck> trucks, int iterationNumber)
+        {
+            return trucks.All(x => iterationNumber >= x.ArcsTravel.Count);
 
         }
 

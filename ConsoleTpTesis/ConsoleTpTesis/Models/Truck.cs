@@ -39,6 +39,21 @@ namespace ConsoleTpTesis.Models
             return result;            
         }
 
+        public int AddSimulatedArcToTravel(Arc arc)
+        {
+            var result = 0;            
+            this.TimeLimit -= arc.Cost;
+
+            if (arc.Demand <= this.Capacity)
+            {
+                this.Capacity -= arc.Demand;
+                result = arc.Profit;
+                arc.Profit = 0;
+                arc.Demand = 0;
+                arc.ROI = 0;
+            }
+            return result;
+        }
         public void PrintStatus()
         {
             Console.WriteLine("Truck " + this.Id+ " Capacity: " +this.Capacity+" TimeLimit: "+this.TimeLimit);            

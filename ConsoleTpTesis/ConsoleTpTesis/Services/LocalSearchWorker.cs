@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleTpMetaheuristica.Services
+namespace ConsoleTpTesis.Services
 {
     public class LocalSearchWorker
     {
@@ -40,14 +40,17 @@ namespace ConsoleTpMetaheuristica.Services
             randomTruck.ArcsTravel.Remove(randomArc);
 
             //devolver lista de arcos con camino de first a second
-            IList<Arc> newRoad = this.GetRoadFromTo(randomArc.first, randomArc.second);
+            IList<Arc> newRoad = this.GetRoadFromTo(randomArc.first, randomArc.second, environment.Graph);
+
+            if(newRoad.Count == 0) { return null; }
 
             var firstRoad = randomTruck.ArcsTravel.Take(randomArcIndex-1);
             var sndRoad = randomTruck.ArcsTravel.Skip(randomArcIndex-1);
 
             sndRoad = newRoad.Concat(sndRoad);
             var finalArcRoad = firstRoad.Concat(sndRoad);
-            randomTruck.ArcsTravel = finalArcRoad.ToList();
+            var otherList = finalArcRoad.ToList();
+            randomTruck.ArcsTravel = otherList;
 
             this.RemakeNodeTravel(randomTruck);
 
@@ -56,6 +59,11 @@ namespace ConsoleTpMetaheuristica.Services
 
             return result;
             
+        }
+
+        private IList<Arc> GetRoadFromTo(Node first, Node second, Graph graph)
+        {
+            return DijkstraShortestRouteService.CalculateRoadFromTo(first, second, graph);
         }
 
 

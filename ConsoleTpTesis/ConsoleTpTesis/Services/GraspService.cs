@@ -1,4 +1,5 @@
 ﻿using ConsoleTpTesis.Models;
+using ConsoleTpTesis.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,6 +16,7 @@ namespace ConsoleTpMetaheuristica.Services
         private static Random r = new Random();
         public void GetResult(GraphEnvironment environment)
         {
+            var results = new List<GraphEnvironment>();
             this.CalculateInitialROI(environment);
             
             var seedsQuantity = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
@@ -38,18 +40,13 @@ namespace ConsoleTpMetaheuristica.Services
             {
                 var worker = new LocalSearchWorker(actualSeed);
                 worker.Run();
+
                 results.Add(worker.resultSeed);
             });
-
-
-            result = this.GetBest(results);
-            return result;
-
-
-            environment.AccumulatedProfit = AccumulatedProfit;
+            
+            environment.AccumulatedProfit = results.Max(x => x.AccumulatedProfit);
         }
         
-
         private void MakeSeedResult(GraphEnvironment environment)
         {
             Finished = false;

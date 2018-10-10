@@ -14,7 +14,13 @@ namespace ConsoleTpTesis.Services
             var dijkstra = new Dijkstra();
             dijkstra.Run(1, graph);
         }
-        
-        
+
+
+        public static IList<Arc> CalculateRoadFromTo(Node first,Node second,Graph graph)
+        {
+            var dijkstra = new Dijkstra();
+            return dijkstra.RoadFromTo(first, second, graph);
+
+        }
     }
 }
