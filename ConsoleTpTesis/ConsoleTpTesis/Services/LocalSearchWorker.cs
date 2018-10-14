@@ -11,7 +11,7 @@ namespace ConsoleTpTesis.Services
     public class LocalSearchWorker
     {
         public GraphEnvironment resultSeed;
-        private static Random r = new Random();
+        private Random r = new Random();
         public LocalSearchWorker(GraphEnvironment seed)
         {
             this.resultSeed = seed;
@@ -24,7 +24,7 @@ namespace ConsoleTpTesis.Services
             for (int j = 0; j < maxIterations; j++)
             {
                 var localSolution = this.MakeLocalSolution(resultSeed);
-                if (localSolution.IsBetter(resultSeed)) resultSeed = localSolution;                
+                if (localSolution != null && localSolution.IsBetter(resultSeed)) resultSeed = localSolution;                
             }
             
         }
@@ -47,9 +47,22 @@ namespace ConsoleTpTesis.Services
             var firstRoad = randomTruck.ArcsTravel.Take(randomArcIndex-1);
             var sndRoad = randomTruck.ArcsTravel.Skip(randomArcIndex-1);
 
-            sndRoad = newRoad.Concat(sndRoad);
-            var finalArcRoad = firstRoad.Concat(sndRoad);
-            var otherList = finalArcRoad.ToList();
+            var otherList = new List<Arc>();
+            foreach(var arc in firstRoad)
+            {
+                otherList.Add(arc);
+            }
+
+            foreach (var arc in newRoad)
+            {
+                otherList.Add(arc);
+            }
+
+            foreach (var arc in sndRoad)
+            {
+                otherList.Add(arc);
+            }
+            
             randomTruck.ArcsTravel = otherList;
 
             this.RemakeNodeTravel(randomTruck);

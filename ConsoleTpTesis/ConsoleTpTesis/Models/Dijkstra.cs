@@ -136,33 +136,45 @@ namespace ConsoleTpTesis.Models
                 node.ShortestRoute = distancia[node.Id];
             }
 
-            var resultReversed = new List<Arc>();
-            var actualNode = graph.Nodes.Where(x => x.Id == second.Id).FirstOrDefault();
-            while(actualNode.Id != first.Id)
+            try
             {
-                if(actualNode.Id == first.Id)
+
+                var resultReversed = new List<Arc>();
+                var actualNode = graph.Nodes.Where(x => x.Id == second.Id).FirstOrDefault();
+                while (actualNode.Id != first.Id)
                 {
-                    resultReversed.Reverse();
+                    if (actualNode.Id == first.Id)
+                    {
+                        resultReversed.Reverse();
+                    }
+
+                    if (actualNode.ShortestPredecesor != null)
+                    {
+
+                        var arcToAdd = graph.Arcs.Where(x => actualNode.ShortestPredecesor != null && (x.first.Id == actualNode.Id && x.second.Id == actualNode.ShortestPredecesor.Id)
+                                                        || (x.second.Id == actualNode.Id && x.first.Id == actualNode.ShortestPredecesor.Id)).FirstOrDefault();
+
+                        resultReversed.Add(arcToAdd);
+                        actualNode = actualNode.ShortestPredecesor;
+                    }
+                    else
+                    {
+                        return new List<Arc>();
+                    }
+
                 }
 
-                if (actualNode.ShortestPredecesor != null)
-                {
-                    var arcToAdd = graph.Arcs.Where(x => (x.first.Id == actualNode.Id && x.second.Id == actualNode.ShortestPredecesor.Id)
-                                                    || (x.second.Id == actualNode.Id && x.first.Id == actualNode.ShortestPredecesor.Id)).FirstOrDefault();
+                resultReversed.Reverse();
 
-                    resultReversed.Add(arcToAdd);
-                    actualNode = actualNode.ShortestPredecesor;
-                }
-                else
-                {
-                    return new List<Arc>();
-                }
-              
+                return resultReversed;
+            }
+            catch(Exception ex)
+            {
+
+                Console.WriteLine("Exception in dijkstra:" + ex.Message);
+                return new List<Arc>();
             }
 
-            resultReversed.Reverse();
-
-            return resultReversed;            
         }
     };
 

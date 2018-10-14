@@ -63,7 +63,7 @@ namespace ConsoleTpTesis.Models
 
             result.AccumulatedProfit = this.AccumulatedProfit;
             result.Graph = this.Graph;
-            result.Trucks = result.Trucks;
+            result.Trucks = this.Trucks;
             
             return result;
         }

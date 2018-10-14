@@ -11,8 +11,7 @@ namespace ConsoleTpMetaheuristica.Services
 {
     public class GraspService
     {
-        private static bool Finished { get; set; }
-        private static int AccumulatedProfit { get; set; }
+        private static bool Finished { get; set; }        
         private static Random r = new Random();
         public void GetResult(GraphEnvironment environment)
         {
@@ -25,30 +24,39 @@ namespace ConsoleTpMetaheuristica.Services
 
             for (int i = 0; i<seedsQuantity; i++)
             {
-                var auxEnv = environment;
+                var auxEnv = environment.Clone();
                 seedsResult.Add(auxEnv);
             }
 
             foreach(var env in seedsResult)
-            {
-                AccumulatedProfit = 0;
+            {                
                 this.MakeSeedResult(env);
             }
-            
 
-            Parallel.ForEach(seedsResult, (actualSeed) =>
+            foreach (var actualSeed in seedsResult)             
             {
                 var worker = new LocalSearchWorker(actualSeed);
                 worker.Run();
 
                 results.Add(worker.resultSeed);
-            });
-            
+            }
+
+
+            //Parallel.ForEach(seedsResult, (actualSeed) =>
+            //{
+            //    var worker = new LocalSearchWorker(actualSeed);
+            //    worker.Run();
+
+            //    results.Add(worker.resultSeed);
+            //});
+
             environment.AccumulatedProfit = results.Max(x => x.AccumulatedProfit);
         }
         
         private void MakeSeedResult(GraphEnvironment environment)
         {
+            var profit = 0;
+
             Finished = false;
             
             var trucksToRoad = environment.Trucks;
@@ -57,15 +65,13 @@ namespace ConsoleTpMetaheuristica.Services
             {
                 foreach (var truck in trucksToRoad)
                 {
-                    this.MakeNextStep(truck, environment.Graph);
+                    this.MakeNextStep(truck, environment);
                     truck.PrintStatus();
                 }
 
                 CheckStatus(trucksToRoad);
             }
-
-            environment.AccumulatedProfit = AccumulatedProfit;
-
+            
         }
 
         private void CheckStatus(IList<Truck> trucks)
@@ -160,8 +166,9 @@ namespace ConsoleTpMetaheuristica.Services
             }            
         }
 
-        private void MakeNextStep(Truck truck, Graph graph)
+        private void MakeNextStep(Truck truck, GraphEnvironment graphEnvironment)
         {
+            var graph = graphEnvironment.Graph;
             var nextArcs = GetNextArcs(truck.ActualNode, graph.Arcs);
             var availableArcs = nextArcs.Where(x => this.CanVisit(truck, graph, x.first.Id == truck.ActualNode ? x.second : x.first)).ToList();
 
@@ -171,7 +178,7 @@ namespace ConsoleTpMetaheuristica.Services
                 Console.WriteLine("\n");
                 Console.WriteLine("Arco seleccionado:");
                 bestArc.Print();
-                AccumulatedProfit += truck.AddToTravel(bestArc);
+                graphEnvironment.AccumulatedProfit += truck.AddToTravel(bestArc);
             }
             else
             {
