@@ -11,10 +11,16 @@ namespace ConsoleTpTesis.Services
     public class LocalSearchWorker
     {
         public GraphEnvironment resultSeed;
+        public Graph originalGraph;
+        public int originalCapacity;
+        public int originalTimeLimit;
         private Random r = new Random();
-        public LocalSearchWorker(GraphEnvironment seed)
+        public LocalSearchWorker(GraphEnvironment seed, Graph graph, int capacity, int timeLimit)
         {
             this.resultSeed = seed;
+            this.originalGraph = graph;
+            this.originalCapacity = capacity;
+            this.originalTimeLimit = timeLimit;
         }
 
         public void Run()
@@ -24,6 +30,11 @@ namespace ConsoleTpTesis.Services
             for (int j = 0; j < maxIterations; j++)
             {
                 var localSolution = this.MakeLocalSolution(resultSeed);
+                if(localSolution != null)
+                {
+                    localSolution.SimulateTravel(this.originalGraph, this.originalCapacity, this.originalTimeLimit);
+                }
+
                 if (localSolution != null && localSolution.IsBetter(resultSeed)) resultSeed = localSolution;                
             }
             

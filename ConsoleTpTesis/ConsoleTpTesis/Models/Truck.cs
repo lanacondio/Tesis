@@ -54,6 +54,25 @@ namespace ConsoleTpTesis.Models
             }
             return result;
         }
+
+        public Truck Clone()
+        {
+            var result = new Truck()
+            {
+                ActualNode = 1,
+                ArcsTravel = new List<Arc>(),
+                Capacity = this.Capacity,
+                Id = this.Id,
+                IsFinished = this.IsFinished,
+                TimeLimit = this.TimeLimit,
+                Travel = new List<Node>()               
+            };
+
+            result.Travel.Add(this.Travel.Where(y => y.Id == result.ActualNode).FirstOrDefault());
+            
+            return result;
+
+        }
         public void PrintStatus()
         {
             Console.WriteLine("Truck " + this.Id+ " Capacity: " +this.Capacity+" TimeLimit: "+this.TimeLimit);            

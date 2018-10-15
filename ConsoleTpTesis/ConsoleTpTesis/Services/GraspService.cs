@@ -20,12 +20,18 @@ namespace ConsoleTpMetaheuristica.Services
             
             var seedsQuantity = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
 
-            var seedsResult = new List<GraphEnvironment>();
+            var seedsResult = new List<GraphEnvironment>();            
+            var originalGraphs = new Queue<Graph>();
+            var originalCapacity = environment.Trucks.FirstOrDefault().Capacity;
+            var originalTimeLimit = environment.Trucks.FirstOrDefault().TimeLimit;
 
             for (int i = 0; i<seedsQuantity; i++)
             {
                 var auxEnv = environment.Clone();
+                var auxGraph = environment.Graph.Clone();
                 seedsResult.Add(auxEnv);
+                originalGraphs.Enqueue(auxGraph);
+
             }
 
             foreach(var env in seedsResult)
@@ -35,7 +41,8 @@ namespace ConsoleTpMetaheuristica.Services
 
             foreach (var actualSeed in seedsResult)             
             {
-                var worker = new LocalSearchWorker(actualSeed);
+                //pasar un clon del grafo inicial porque los arcos viajan con profit en 0
+                var worker = new LocalSearchWorker(actualSeed, originalGraphs.Dequeue(), originalCapacity, originalTimeLimit);
                 worker.Run();
 
                 results.Add(worker.resultSeed);
