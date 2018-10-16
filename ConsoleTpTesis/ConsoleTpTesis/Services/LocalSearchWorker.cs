@@ -44,7 +44,34 @@ namespace ConsoleTpTesis.Services
         {
             var result = environment.Clone();
 
-            var randomTruck = environment.Trucks[r.Next(0, environment.Trucks.Count)];
+            var auxtrucks = new List<Truck>();
+            foreach(var truck in environment.Trucks)
+            {
+                var arcsTravel = new List<Arc>();
+                foreach(var arc in truck.ArcsTravel)
+                {
+                    arcsTravel.Add(arc);
+                }
+
+                var auxTruck = new Truck()
+                {
+                    ActualNode = 1,
+                    ArcsTravel = arcsTravel,
+                    Capacity = truck.Capacity,
+                    Id = truck.Id,
+                    IsFinished = truck.IsFinished,
+                    TimeLimit = truck.TimeLimit,
+                    Travel = new List<Node>()
+                };
+
+                auxTruck.Travel.Add(truck.Travel.Where(y => y.Id == auxTruck.ActualNode).FirstOrDefault());
+
+                auxtrucks.Add(auxTruck);
+
+            }
+
+            result.Trucks = auxtrucks;
+            var randomTruck = result.Trucks[r.Next(0, environment.Trucks.Count)];
             var randomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
             var randomArc = randomTruck.ArcsTravel[randomArcIndex];
 
@@ -56,7 +83,7 @@ namespace ConsoleTpTesis.Services
             if(newRoad.Count == 0) { return null; }
 
             var firstRoad = randomTruck.ArcsTravel.Take(randomArcIndex-1);
-            var sndRoad = randomTruck.ArcsTravel.Skip(randomArcIndex-1);
+            var sndRoad = randomTruck.ArcsTravel.Skip(randomArcIndex - 1);
 
             var otherList = new List<Arc>();
             foreach(var arc in firstRoad)
@@ -117,16 +144,25 @@ namespace ConsoleTpTesis.Services
 
             var result = new List<Node>();
 
+            Node last = null;
             truck.ArcsTravel.ForEach(x=> 
             {
                 if (truck.ArcsTravel.IndexOf(x) == 0)
                 {
                     result.Add(x.first);
                     result.Add(x.second);
+                    last = x.second;
                 }
                 else
                 {
-                    result.Add(x.second);
+                    if(last.Id == x.first.Id)
+                    {
+                        result.Add(x.second);
+                    }
+                    else
+                    {
+                        result.Add(x.first);
+                    }
                 }
                 
             });
