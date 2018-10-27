@@ -38,7 +38,7 @@ namespace ConsoleTpTesis.Services
                 trucks.Add(truck);
             }
 
-            Console.Write("loading file from: " + path);
+            Console.WriteLine("loading file from: " + path);
             using (var reader = new StreamReader(path))
             {
                 int lineNumber = 0;

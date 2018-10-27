@@ -96,6 +96,33 @@ namespace ConsoleTpTesis.Models
         }
 
 
+        public GraphEnvironment CloneWithTravel()
+        {
+            var result = new GraphEnvironment();
+
+            result.AccumulatedProfit = this.AccumulatedProfit;
+            result.Graph = this.Graph.Clone();
+
+            var auxTrucks = new List<Truck>();
+
+            foreach (var truck in this.Trucks)
+            {
+                auxTrucks.Add(truck.CloneWithTravel());
+            }
+
+            result.Trucks = auxTrucks;
+
+            return result;
+        }
+
+        public void PrintResume()
+        {
+
+            Console.WriteLine("Camiones :");
+            this.Trucks.ToList().ForEach(x => x.PrintStatus());
+            Console.WriteLine("Profit:"+ this.AccumulatedProfit.ToString());
+            
+        }
 
     }
 }

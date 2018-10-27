@@ -73,17 +73,22 @@ namespace ConsoleTpTesis.Services
             result.Trucks = auxtrucks;
             var randomTruck = result.Trucks[r.Next(0, environment.Trucks.Count)];
             var randomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
+
+            if(randomArcIndex == 0 || randomArcIndex == randomTruck.ArcsTravel.Count - 1)
+            {
+                return null;
+            }
+
             var randomArc = randomTruck.ArcsTravel[randomArcIndex];
-
-            randomTruck.ArcsTravel.Remove(randomArc);
-
+            randomTruck.ArcsTravel.RemoveAt(randomArcIndex);
+            
             //devolver lista de arcos con camino de first a second
             IList<Arc> newRoad = this.GetRoadFromTo(randomArc.first, randomArc.second, environment.Graph);
-
+            
             if(newRoad.Count == 0) { return null; }
 
-            var firstRoad = randomTruck.ArcsTravel.Take(randomArcIndex-1);
-            var sndRoad = randomTruck.ArcsTravel.Skip(randomArcIndex - 1);
+            var firstRoad = randomTruck.ArcsTravel.Take(randomArcIndex);
+            var sndRoad = randomTruck.ArcsTravel.Skip(randomArcIndex);
 
             var otherList = new List<Arc>();
             foreach(var arc in firstRoad)
@@ -103,8 +108,8 @@ namespace ConsoleTpTesis.Services
             
             randomTruck.ArcsTravel = otherList;
 
-            this.RemakeNodeTravel(randomTruck);
-
+            result.Trucks.ToList().ForEach(x => this.RemakeNodeTravel(x));
+            
             //checkear environment
             if (!IsFeasible(environment)) { result = null; }
 
@@ -145,26 +150,30 @@ namespace ConsoleTpTesis.Services
             var result = new List<Node>();
 
             Node last = null;
-            truck.ArcsTravel.ForEach(x=> 
+            var isFirst = true;
+            truck.ArcsTravel.ForEach(x =>
             {
-                if (truck.ArcsTravel.IndexOf(x) == 0)
+                if (isFirst)
                 {
                     result.Add(x.first);
                     result.Add(x.second);
                     last = x.second;
+                    isFirst = false;
                 }
                 else
                 {
-                    if(last.Id == x.first.Id)
+                    if (last.Id == x.first.Id)
                     {
                         result.Add(x.second);
+                        last = x.second;
                     }
                     else
                     {
                         result.Add(x.first);
+                        last = x.first;
                     }
                 }
-                
+
             });
 
             truck.Travel = result;

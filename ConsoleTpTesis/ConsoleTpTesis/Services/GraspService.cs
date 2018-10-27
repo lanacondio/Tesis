@@ -13,17 +13,19 @@ namespace ConsoleTpMetaheuristica.Services
     {
         private static bool Finished { get; set; }        
         private static Random r = new Random();
-        public void GetResult(GraphEnvironment environment)
+        public List<GraphEnvironment> GetResult(GraphEnvironment environment)
         {
             var results = new List<GraphEnvironment>();
             this.CalculateInitialROI(environment);
             
             var seedsQuantity = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
 
-            var seedsResult = new List<GraphEnvironment>();            
+            var seedsResult = new List<GraphEnvironment>();
+            var backupResult = new List<GraphEnvironment>();
             var originalGraphs = new Queue<Graph>();
             var originalCapacity = environment.Trucks.FirstOrDefault().Capacity;
             var originalTimeLimit = environment.Trucks.FirstOrDefault().TimeLimit;
+            var origGraph = environment.Graph.Clone();
 
             for (int i = 0; i<seedsQuantity; i++)
             {
@@ -37,7 +39,9 @@ namespace ConsoleTpMetaheuristica.Services
             foreach(var env in seedsResult)
             {                
                 this.MakeSeedResult(env);
+                backupResult.Add(env.CloneWithTravel());
             }
+
 
             foreach (var actualSeed in seedsResult)             
             {
@@ -56,10 +60,70 @@ namespace ConsoleTpMetaheuristica.Services
 
             //    results.Add(worker.resultSeed);
             //});
+            var average = getAverageDiference(results, backupResult);
+            Console.WriteLine("Average diference percentage: " + average.ToString()+"%");
+            var resultList = new List<GraphEnvironment>();
 
-            environment.AccumulatedProfit = results.Max(x => x.AccumulatedProfit);
+            var resultIndex = results.IndexOf(results.Where(x => x.AccumulatedProfit == results.Max(y => y.AccumulatedProfit)).FirstOrDefault());
+
+            backupResult[resultIndex].SimulateTravel(origGraph, originalCapacity, originalTimeLimit);
+            resultList.Add(backupResult[resultIndex]);
+           // results[resultIndex].Trucks.ToList().ForEach(x => this.RemakeNodeTravel(x));
+            resultList.Add(results[resultIndex]);
+            return resultList;
+            
         }
-        
+
+        //private void RemakeNodeTravel(Truck truck)
+        //{
+
+        //     var result = new List<Node>();
+
+        //    Node last = null;
+        //    var isFirst = true;
+        //    truck.ArcsTravel.ForEach(x =>
+        //    {
+        //        if (isFirst)
+        //        {
+        //            result.Add(x.first);
+        //            result.Add(x.second);
+        //            last = x.second;
+        //            isFirst = false;
+        //        }
+        //        else
+        //        {
+        //            if (last.Id == x.first.Id)
+        //            {
+        //                result.Add(x.second);
+        //                last = x.second;
+        //            }
+        //            else
+        //            {
+        //                result.Add(x.first);
+        //                last = x.first;
+        //            }
+        //        }
+
+        //    });
+
+        //    truck.Travel = result;
+
+        //}
+
+        private decimal getAverageDiference(List<GraphEnvironment> results, List<GraphEnvironment> backupResult)
+        {
+            var diferences = new List<decimal>();
+
+            for (int i= 0; i< results.Count; i++)
+            {
+                var diference = results[i].AccumulatedProfit - backupResult[i].AccumulatedProfit;
+                var diferencePercentage = diference * 100 / results[i].AccumulatedProfit;
+                diferences.Add(diferencePercentage);
+            }
+
+            return diferences.Average();
+        }
+
         private void MakeSeedResult(GraphEnvironment environment)
         {
             var profit = 0;
@@ -73,7 +137,7 @@ namespace ConsoleTpMetaheuristica.Services
                 foreach (var truck in trucksToRoad)
                 {
                     this.MakeNextStep(truck, environment);
-                    truck.PrintStatus();
+                    //truck.PrintStatus();
                 }
 
                 CheckStatus(trucksToRoad);
@@ -96,9 +160,9 @@ namespace ConsoleTpMetaheuristica.Services
                 var resultLenght = int.Parse(Math.Round((decimal)(arcs.Count * randomPercentage / 100)).ToString());
                 
                 var bestPercentage = arcs.OrderByDescending(x => x.ROI).Take(resultLenght).ToList();
-                Console.WriteLine("\n");
-                Console.WriteLine("Mejores arcos: ");
-                bestPercentage.ForEach(x => x.Print());
+                //Console.WriteLine("\n");
+                //Console.WriteLine("Mejores arcos: ");
+                //bestPercentage.ForEach(x => x.Print());
 
                 if(bestPercentage.Count == 0)
                 {
@@ -182,9 +246,9 @@ namespace ConsoleTpMetaheuristica.Services
             if(availableArcs.Count > 0)
             {
                 var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs, truck.Travel);
-                Console.WriteLine("\n");
-                Console.WriteLine("Arco seleccionado:");
-                bestArc.Print();
+                //Console.WriteLine("\n");
+                //Console.WriteLine("Arco seleccionado:");
+                //bestArc.Print();
                 graphEnvironment.AccumulatedProfit += truck.AddToTravel(bestArc);
             }
             else

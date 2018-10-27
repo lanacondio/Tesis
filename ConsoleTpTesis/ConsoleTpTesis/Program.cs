@@ -24,10 +24,15 @@ namespace ConsoleTpMetaheuristica
                 var environment = ParseService.ParseInput(path);
                 DijkstraShortestRouteService.CalculateShortestRoute(environment.Graph);
                 GraspService GraspService = new GraspService();
-                GraspService.GetResult(environment);
-                Console.WriteLine("\n");
-                Console.WriteLine("Accumulated Profit: " + environment.AccumulatedProfit.ToString());
-               
+
+                var result = GraspService.GetResult(environment);
+                //Console.WriteLine("\n");
+                //Console.WriteLine("Accumulated Profit: " + environment.AccumulatedProfit.ToString());
+                Console.WriteLine("Original Environment: ");
+                result[0].PrintResume();
+                
+                Console.WriteLine("Final Result: ");
+                result[1].PrintResume();
                 Console.ReadLine();
             }
             catch (Exception ex)
