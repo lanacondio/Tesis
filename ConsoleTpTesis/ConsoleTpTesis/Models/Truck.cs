@@ -100,7 +100,7 @@ namespace ConsoleTpTesis.Models
             Console.WriteLine("Travel: ");
             this.Travel.Select(x => x.Id).ToList().ForEach(x => Console.Write(x + "->"));
             Console.WriteLine("\n");
-            Console.WriteLine("===============");
+            //Console.WriteLine("===============");
         }
     }
 }

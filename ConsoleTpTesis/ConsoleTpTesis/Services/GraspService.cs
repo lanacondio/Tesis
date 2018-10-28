@@ -61,7 +61,7 @@ namespace ConsoleTpMetaheuristica.Services
             //    results.Add(worker.resultSeed);
             //});
             var average = getAverageDiference(results, backupResult);
-            Console.WriteLine("Average diference percentage: " + average.ToString()+"%");
+            Console.WriteLine("\nAverage diference percentage: " + average.ToString()+"%\n");
             var resultList = new List<GraphEnvironment>();
 
             var resultIndex = results.IndexOf(results.Where(x => x.AccumulatedProfit == results.Max(y => y.AccumulatedProfit)).FirstOrDefault());

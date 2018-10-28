@@ -28,10 +28,12 @@ namespace ConsoleTpMetaheuristica
                 var result = GraspService.GetResult(environment);
                 //Console.WriteLine("\n");
                 //Console.WriteLine("Accumulated Profit: " + environment.AccumulatedProfit.ToString());
-                Console.WriteLine("Original Environment: ");
+                Console.WriteLine("Original Environment:");
+                Console.WriteLine("--------------------\n");
                 result[0].PrintResume();
                 
-                Console.WriteLine("Final Result: ");
+                Console.WriteLine("Final Result:");
+                Console.WriteLine("------------\n");
                 result[1].PrintResume();
                 Console.ReadLine();
             }
