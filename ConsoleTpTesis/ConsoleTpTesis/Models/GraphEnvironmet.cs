@@ -118,10 +118,11 @@ namespace ConsoleTpTesis.Models
         public void PrintResume()
         {
 
-            Console.WriteLine("Camiones :");
+            Console.WriteLine("Camiones:\n");
             this.Trucks.ToList().ForEach(x => x.PrintStatus());
             Console.WriteLine("Profit:"+ this.AccumulatedProfit.ToString());
-            
+            Console.WriteLine("\n==========\n");
+
         }
 
     }
