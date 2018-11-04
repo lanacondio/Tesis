@@ -22,20 +22,20 @@ namespace ConsoleTpTesis.Models
         public int AddToTravel(Arc arc)
         {
             var result = 0;
-            var nodeToAdd = arc.first.Id == ActualNode ? arc.second : arc.first;
-            this.ArcsTravel.Add(arc);
-            this.Travel.Add(nodeToAdd);
-            this.ActualNode = nodeToAdd.Id;
-
+            int prob = gen.Next(99) + 1;
             var aceptationRandomPercentage = int.Parse(ConfigurationManager.AppSettings["TakeArcPercentage"]);
-
-            this.TimeLimit -= arc.Cost;
-
-            int prob = gen.Next(100);
-            var takeArc =  prob <= aceptationRandomPercentage;
+            var takeArc = prob <= aceptationRandomPercentage;
 
             if (arc.Demand <= this.Capacity && takeArc)
             {
+                
+                var nodeToAdd = arc.first.Id == ActualNode ? arc.second : arc.first;
+                this.ArcsTravel.Add(arc);
+                this.Travel.Add(nodeToAdd);
+                this.ActualNode = nodeToAdd.Id;
+                
+                this.TimeLimit -= arc.Cost;
+                
                 this.Capacity -= arc.Demand;
                 result = arc.Profit;
                 arc.Profit = 0;
@@ -44,7 +44,7 @@ namespace ConsoleTpTesis.Models
 
             }
 
-            return result;            
+            return result;              
         }
 
         public int AddSimulatedArcToTravel(Arc arc)
