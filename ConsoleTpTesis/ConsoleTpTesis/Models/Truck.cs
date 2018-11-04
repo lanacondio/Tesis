@@ -15,6 +15,8 @@ namespace ConsoleTpTesis.Models
         public List<Node> Travel { get; set; }
         public List<Arc> ArcsTravel { get; set; }
         public bool IsFinished { get; set; }
+        Random gen = new Random();
+        
 
         public int AddToTravel(Arc arc)
         {
@@ -26,7 +28,10 @@ namespace ConsoleTpTesis.Models
 
             this.TimeLimit -= arc.Cost;
 
-            if (arc.Demand <= this.Capacity)
+            int prob = gen.Next(100);
+            var takeArc =  prob <= 20;
+
+            if (arc.Demand <= this.Capacity && takeArc)
             {
                 this.Capacity -= arc.Demand;
                 result = arc.Profit;
