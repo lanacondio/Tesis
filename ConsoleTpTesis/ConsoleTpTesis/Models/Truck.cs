@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,10 +27,12 @@ namespace ConsoleTpTesis.Models
             this.Travel.Add(nodeToAdd);
             this.ActualNode = nodeToAdd.Id;
 
+            var aceptationRandomPercentage = int.Parse(ConfigurationManager.AppSettings["TakeArcPercentage"]);
+
             this.TimeLimit -= arc.Cost;
 
             int prob = gen.Next(100);
-            var takeArc =  prob <= 20;
+            var takeArc =  prob <= aceptationRandomPercentage;
 
             if (arc.Demand <= this.Capacity && takeArc)
             {
