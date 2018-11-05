@@ -29,7 +29,7 @@ namespace ConsoleTpTesis.Services
 
             for (int j = 0; j < maxIterations; j++)
             {
-                var localSolution = this.MakeLocalSolution(resultSeed);
+                var localSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
                 if(localSolution != null)
                 {
                     localSolution.SimulateTravel(this.originalGraph, this.originalCapacity, this.originalTimeLimit);
@@ -40,7 +40,7 @@ namespace ConsoleTpTesis.Services
             
         }
 
-        public GraphEnvironment MakeLocalSolution(GraphEnvironment environment)
+        public GraphEnvironment MakeLocalSolution(GraphEnvironment environment, int originalCapacity, int originalTimeLimit)
         {
             var result = environment.Clone();
 
@@ -57,10 +57,10 @@ namespace ConsoleTpTesis.Services
                 {
                     ActualNode = 1,
                     ArcsTravel = arcsTravel,
-                    Capacity = truck.Capacity,
+                    Capacity = originalCapacity,
                     Id = truck.Id,
                     IsFinished = truck.IsFinished,
-                    TimeLimit = truck.TimeLimit,
+                    TimeLimit = originalTimeLimit,
                     Travel = new List<Node>()
                 };
 
@@ -111,7 +111,7 @@ namespace ConsoleTpTesis.Services
             result.Trucks.ToList().ForEach(x => this.RemakeNodeTravel(x));
             
             //checkear environment
-            if (!IsFeasible(environment)) { result = null; }
+            if (!IsFeasible(result)) { result = null; }
 
             return result;
             
