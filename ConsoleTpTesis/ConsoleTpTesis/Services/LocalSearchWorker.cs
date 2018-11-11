@@ -65,30 +65,69 @@ namespace ConsoleTpTesis.Services
                 };
 
                 auxTruck.Travel.Add(truck.Travel.Where(y => y.Id == auxTruck.ActualNode).FirstOrDefault());
-
                 auxtrucks.Add(auxTruck);
 
             }
 
             result.Trucks = auxtrucks;
             var randomTruck = result.Trucks[r.Next(0, environment.Trucks.Count)];
-            var randomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
 
-            if(randomArcIndex == 0 || randomArcIndex == randomTruck.ArcsTravel.Count - 1)
+            var firstRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
+            var secondRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
+
+            while(secondRandomArcIndex == firstRandomArcIndex)
             {
-                return null;
+                secondRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
             }
 
-            var randomArc = randomTruck.ArcsTravel[randomArcIndex];
-            randomTruck.ArcsTravel.RemoveAt(randomArcIndex);
-            
-            //devolver lista de arcos con camino de first a second
-            IList<Arc> newRoad = this.GetRoadFromTo(randomArc.first, randomArc.second, environment.Graph);
-            
-            if(newRoad.Count == 0) { return null; }
+            if(secondRandomArcIndex < firstRandomArcIndex)
+            {
+                var auxidx = firstRandomArcIndex;
+                firstRandomArcIndex = secondRandomArcIndex;
+                secondRandomArcIndex = auxidx;
+            }
 
-            var firstRoad = randomTruck.ArcsTravel.Take(randomArcIndex);
-            var sndRoad = randomTruck.ArcsTravel.Skip(randomArcIndex);
+            var indexesToRemove = GetArcsIndexBetween(firstRandomArcIndex,
+                secondRandomArcIndex);
+
+            //var randomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
+
+            //if(randomArcIndex == 0 || randomArcIndex == randomTruck.ArcsTravel.Count - 1)
+            //{
+            //    return null;
+            //}
+
+            //var randomArc = randomTruck.ArcsTravel[randomArcIndex];
+            //revisar caso de arcos repetidos, hay q revisar de cual viene realmente
+            var startNode = GetStartNodeFrom(firstRandomArcIndex, randomTruck.ArcsTravel);
+            var endNode = GetEndNodeFrom(secondRandomArcIndex, randomTruck.ArcsTravel);
+
+            var auxTravel = new List<Arc>();
+
+            for(int i=0; i< randomTruck.ArcsTravel.Count; i++)
+            {
+                if (!(indexesToRemove.Contains(i)))
+                {
+                    auxTravel.Add(randomTruck.ArcsTravel[i]);
+                }
+            }
+
+            
+
+            randomTruck.ArcsTravel = auxTravel;
+            //indexesToRemove.ForEach(x => randomTruck.ArcsTravel.RemoveAt(x));
+            //randomTruck.ArcsTravel.RemoveAt(randomArcIndex);
+
+            //devolver lista de arcos con camino de first a second
+
+            //IList<Arc> newRoad = this.GetRoadFromTo(randomTruck.Travel[firstRandomNodeIndex],
+            //    randomTruck.Travel[secondRandomNodeIndex],environment.Graph);
+            IList<Arc> newRoad = this.GetRoadFromTo(startNode, endNode, environment.Graph);
+
+            if (newRoad.Count == 0) { return null; }
+
+            var firstRoad = randomTruck.ArcsTravel.Take(indexesToRemove.First());
+            var sndRoad = randomTruck.ArcsTravel.Skip(indexesToRemove.Last());
 
             var otherList = new List<Arc>();
             foreach(var arc in firstRoad)
@@ -117,11 +156,78 @@ namespace ConsoleTpTesis.Services
             
         }
 
+        private Node GetStartNodeFrom(int arcIndex,List<Arc> arcs)
+        {
+            Node result;
+            if(arcIndex == 0 || arcIndex == arcs.Count-1)
+            {
+                result =  arcs[0].first;
+            }
+            else
+            {
+                var arc = arcs[arcIndex];
+                var prevArc = arcs[arcIndex - 1];
+
+                if(arc.first.Id == prevArc.second.Id 
+                    || arc.first.Id == prevArc.first.Id)
+                {
+                    result = arc.first;
+                }
+                else
+                {
+                    result = arc.second;
+                }
+            }
+
+            return result;
+        }
+
+        private Node GetEndNodeFrom(int arcIndex, List<Arc> arcs)
+        {
+            Node result;
+            if (arcIndex == 0 || arcIndex == arcs.Count - 1)
+            {
+                result = arcs[0].first;
+            }
+            else
+            {
+                var arc = arcs[arcIndex];
+                var nextArc = arcs[arcIndex + 1];
+
+                if (arc.first.Id == nextArc.second.Id
+                    || arc.first.Id == nextArc.first.Id)
+                {
+                    result = arc.first;
+                }
+                else
+                {
+                    result = arc.second;
+                }
+            }
+
+            return result;
+        }
+
+
         private IList<Arc> GetRoadFromTo(Node first, Node second, Graph graph)
         {
             return DijkstraShortestRouteService.CalculateRoadFromTo(first, second, graph);
         }
 
+
+        private List<int> GetArcsIndexBetween(int fstIndex,int sndIndex)
+        {
+            var result = new List<int>();
+
+            int i = fstIndex;
+            while(i <= sndIndex)
+            {
+                result.Add(i);
+                i++;
+            }
+
+            return result;
+        }
 
         private bool IsFeasible(GraphEnvironment environment)
         {
@@ -137,12 +243,41 @@ namespace ConsoleTpTesis.Services
 
         private bool IsValidTravel(Truck truck,  GraphEnvironment environment)
         {
+
             var totalcost = truck.ArcsTravel.Sum(x => x.Cost);
             var totaldemand = truck.ArcsTravel.Sum(x => x.Demand);
 
-            return truck.Capacity <= totaldemand && truck.TimeLimit <= totalcost;
+            //return truck.Capacity >= totaldemand && truck.TimeLimit >= totalcost;
+            return truck.TimeLimit >= totalcost && CheckedArcs(truck.ArcsTravel);
         }
 
+        private bool CheckedArcs(List<Arc> travel)
+        {
+            var result = true;
+            if((travel.First().first.Id != 1 && travel.First().second.Id != 1)
+                ||(travel.Last().first.Id != 1 && travel.Last().second.Id != 1))
+            {
+                return false;
+            }
+
+            var actualNodeId = 1;
+            for(int i = 0; i< travel.Count; i++)
+            {
+                if(travel[i].first.Id != actualNodeId 
+                    && travel[i].second.Id != actualNodeId) { return false; }
+
+                if (travel[i].first.Id == actualNodeId)
+                {
+                    actualNodeId = travel[i].second.Id;
+                }
+                else
+                {
+                    actualNodeId = travel[i].first.Id;
+                }
+            }
+
+            return result;
+        }
 
         private void RemakeNodeTravel(Truck truck)
         {
