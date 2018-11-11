@@ -21,9 +21,10 @@ namespace ConsoleTpTesis.Services
             int edgesQuantity;
             int capacity;
             int timeLimit;
+            int minimumDemand = int.MaxValue;
             var trucksQuantity = int.Parse(ConfigurationManager.AppSettings["TruckQuantity"]);
             
-            var graph = new Graph() { Arcs = new List<Arc>(), Nodes = new List<Node>() };
+            var graph = new Graph() { Arcs = new List<Arc>(), Nodes = new List<Node>()};
             var trucks = new List<Truck>();
 
             for (int i = 0; i < trucksQuantity; i++)
@@ -53,7 +54,8 @@ namespace ConsoleTpTesis.Services
                             var arc = ParseArc(data[0], graph);
                             arc.Cost = int.Parse(data[2]);
                             arc.Demand = int.Parse(data[4]);                          
-                            arc.Profit = (int)Math.Round(double.Parse(data[6], CultureInfo.InvariantCulture));
+                            arc.Profit = (int)Math.Round(double.Parse(data[6], CultureInfo.InvariantCulture));                            
+                            if(arc.Demand < minimumDemand) { minimumDemand = arc.Demand; }
                             graph.Arcs.Add(arc);
 
                         }
@@ -100,9 +102,10 @@ namespace ConsoleTpTesis.Services
             trucks.ForEach(x => x.Travel.Add(graph.Nodes.Where(y => y.Id == x.ActualNode).FirstOrDefault()));
 
             return new GraphEnvironment()
-            {
+            {                
                 Graph = graph,
-                Trucks = trucks
+                Trucks = trucks,
+                MinimumDemand = minimumDemand
             };
 
         }

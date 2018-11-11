@@ -10,7 +10,8 @@ namespace ConsoleTpTesis.Models
     {
         public Graph Graph { get; set; }
         public IList<Truck> Trucks { get; set; }
-
+        
+        public int MinimumDemand { get; set; }
         public int AccumulatedProfit { get; set; }
 
         public bool IsBetter(GraphEnvironment other)
@@ -81,6 +82,7 @@ namespace ConsoleTpTesis.Models
             var result = new GraphEnvironment();
 
             result.AccumulatedProfit = this.AccumulatedProfit;
+            result.MinimumDemand = this.MinimumDemand;
             result.Graph = this.Graph.Clone();
 
             var auxTrucks = new List<Truck>();
@@ -101,6 +103,7 @@ namespace ConsoleTpTesis.Models
             var result = new GraphEnvironment();
 
             result.AccumulatedProfit = this.AccumulatedProfit;
+            result.MinimumDemand = this.MinimumDemand;
             result.Graph = this.Graph.Clone();
 
             var auxTrucks = new List<Truck>();
