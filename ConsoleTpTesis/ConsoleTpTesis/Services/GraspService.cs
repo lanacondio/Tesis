@@ -151,11 +151,16 @@ namespace ConsoleTpMetaheuristica.Services
             Finished = trucks.Count == 0;
         }
 
-        private Arc GetBestsArcsWithRandomPercentage(IList<Arc> arcs, IList<Node> travel)
+        private Arc GetBestsArcsWithRandomPercentage(IList<Arc> arcs, IList<Node> travel, Truck truck, int minimumDemand)
         {
             Arc result = null;
             try
             {
+                if (truck.Capacity < minimumDemand)
+                {
+                    return arcs.OrderByDescending(x => this.GetMinimumArcDistance(x, truck)).LastOrDefault();
+                }
+
                 var randomPercentage = int.Parse(ConfigurationManager.AppSettings["RandomPercentage"]);
                 var resultLenght = int.Parse(Math.Round((decimal)(arcs.Count * randomPercentage / 100)).ToString());
                 
@@ -201,6 +206,14 @@ namespace ConsoleTpMetaheuristica.Services
                 throw ex;
             }
             
+        }
+
+        private int GetMinimumArcDistance(Arc arc, Truck truck)
+        {
+            var otherNode = arc.first.Id == truck.ActualNode ?
+                arc.second : arc.first;
+
+            return otherNode.ShortestRoute;
 
         }
 
@@ -245,7 +258,7 @@ namespace ConsoleTpMetaheuristica.Services
 
             if(availableArcs.Count > 0)
             {
-                var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs, truck.Travel);
+                var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs, truck.Travel, truck, graphEnvironment.MinimumDemand);
                 //Console.WriteLine("\n");
                 //Console.WriteLine("Arco seleccionado:");
                 //bestArc.Print();

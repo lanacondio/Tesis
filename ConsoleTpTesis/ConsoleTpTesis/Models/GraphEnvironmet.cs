@@ -13,6 +13,8 @@ namespace ConsoleTpTesis.Models
 
         public int AccumulatedProfit { get; set; }
 
+        public int MinimumDemand { get; set; }
+
         public bool IsBetter(GraphEnvironment other)
         {
             if (other == null) return false;
@@ -82,7 +84,7 @@ namespace ConsoleTpTesis.Models
 
             result.AccumulatedProfit = this.AccumulatedProfit;
             result.Graph = this.Graph.Clone();
-
+            result.MinimumDemand = this.MinimumDemand;
             var auxTrucks = new List<Truck>();
 
             foreach(var truck in this.Trucks)
@@ -102,6 +104,7 @@ namespace ConsoleTpTesis.Models
 
             result.AccumulatedProfit = this.AccumulatedProfit;
             result.Graph = this.Graph.Clone();
+            result.MinimumDemand = this.MinimumDemand;
 
             var auxTrucks = new List<Truck>();
 
