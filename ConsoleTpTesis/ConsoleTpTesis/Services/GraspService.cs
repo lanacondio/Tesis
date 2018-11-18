@@ -256,7 +256,9 @@ namespace ConsoleTpMetaheuristica.Services
             var nextArcs = GetNextArcs(truck.ActualNode, graph.Arcs);
             var availableArcs = nextArcs.Where(x => this.CanVisit(truck, graph, x.first.Id == truck.ActualNode ? x.second : x.first)).ToList();
 
-            if(availableArcs.Count > 0)
+            if (availableArcs.Count > 0
+              && !(truck.Capacity < graphEnvironment.MinimumDemand
+              && truck.ActualNode == 1))
             {
                 var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs, truck.Travel, truck, graphEnvironment.MinimumDemand);
                 //Console.WriteLine("\n");

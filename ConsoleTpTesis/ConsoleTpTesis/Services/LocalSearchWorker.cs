@@ -75,6 +75,7 @@ namespace ConsoleTpTesis.Services
             var firstRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
             var secondRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
 
+            //ver que pasa con pocos arcos
             while(secondRandomArcIndex == firstRandomArcIndex)
             {
                 secondRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
@@ -111,10 +112,8 @@ namespace ConsoleTpTesis.Services
                     auxTravel.Add(randomTruck.ArcsTravel[i]);
                 }
             }
-
             
-
-            randomTruck.ArcsTravel = auxTravel;
+            //randomTruck.ArcsTravel = auxTravel;
             //indexesToRemove.ForEach(x => randomTruck.ArcsTravel.RemoveAt(x));
             //randomTruck.ArcsTravel.RemoveAt(randomArcIndex);
 
