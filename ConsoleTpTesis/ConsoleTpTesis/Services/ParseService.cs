@@ -34,7 +34,8 @@ namespace ConsoleTpTesis.Services
                     Id = i,
                     ActualNode = 1,
                     Travel = new List<Node>(),
-                    ArcsTravel = new List<Arc>()
+                    ArcsTravel = new List<Arc>(),
+                    TabooArcs = new List<int>()
                 };
                 trucks.Add(truck);
             }
@@ -42,6 +43,7 @@ namespace ConsoleTpTesis.Services
             Console.WriteLine("loading file from: " + path);
             using (var reader = new StreamReader(path))
             {
+                int arcId = 0;
                 int lineNumber = 0;
                 string line;
                 while ((line = reader.ReadLine()) != null && !line.Contains("DEPOT"))
@@ -52,12 +54,13 @@ namespace ConsoleTpTesis.Services
                         if (lineNumber > 5)
                         {
                             var arc = ParseArc(data[0], graph);
+                            arc.Id = arcId;
                             arc.Cost = int.Parse(data[2]);
                             arc.Demand = int.Parse(data[4]);
                             arc.Profit = (int)Math.Round(double.Parse(data[6], CultureInfo.InvariantCulture));
                             if (arc.Demand < minimumDemand) { minimumDemand = arc.Demand; }
                             graph.Arcs.Add(arc);
-
+                            arcId++;
                         }
                         else
                         {

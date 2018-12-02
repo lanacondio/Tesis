@@ -8,6 +8,7 @@ namespace ConsoleTpTesis.Models
 {
     public class Arc
     {
+        public int Id { get; set; }
         public Node first { get; set; }
         public Node second { get; set; }
         public int Cost { get; set; }

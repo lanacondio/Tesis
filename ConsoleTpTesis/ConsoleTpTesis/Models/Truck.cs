@@ -9,6 +9,7 @@ namespace ConsoleTpTesis.Models
 {
     public class Truck
     {
+        public List<int> TabooArcs { get; set; }
         public int Id { get; set; }
         public int Capacity { get; set; }
         public int TimeLimit { get; set; }
@@ -20,12 +21,13 @@ namespace ConsoleTpTesis.Models
         
 
         public int AddToTravel(Arc arc)
-        {
+        {            
             var result = 0;
             int prob = gen.Next(99) + 1;
             var aceptationRandomPercentage = int.Parse(ConfigurationManager.AppSettings["TakeArcPercentage"]);
             var takeArc = prob <= aceptationRandomPercentage;
 
+            TabooArcs.Add(arc.Id);
 
             var nodeToAdd = arc.first.Id == ActualNode ? arc.second : arc.first;
             this.ArcsTravel.Add(arc);
@@ -72,7 +74,8 @@ namespace ConsoleTpTesis.Models
                 Id = this.Id,
                 IsFinished = this.IsFinished,
                 TimeLimit = this.TimeLimit,
-                Travel = new List<Node>()               
+                Travel = new List<Node>(),
+                TabooArcs = new List<int>()
             };
 
             result.Travel.Add(this.Travel.Where(y => y.Id == result.ActualNode).FirstOrDefault());

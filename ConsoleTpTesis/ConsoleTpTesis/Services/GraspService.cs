@@ -161,22 +161,18 @@ namespace ConsoleTpMetaheuristica.Services
                     return arcs.OrderByDescending(x => this.GetMinimumArcDistance(x, truck)).LastOrDefault();
                 }
 
+
                 var randomPercentage = int.Parse(ConfigurationManager.AppSettings["RandomPercentage"]);
                 var resultLenght = int.Parse(Math.Round((decimal)(arcs.Count * randomPercentage / 100)).ToString());
                 
-                var bestPercentage = arcs.OrderByDescending(x => x.ROI).Take(resultLenght).ToList();
-                //Console.WriteLine("\n");
-                //Console.WriteLine("Mejores arcos: ");
-                //bestPercentage.ForEach(x => x.Print());
-
+                var bestPercentage = arcs.Where(x => !truck.TabooArcs.Contains(x.Id)).OrderByDescending(x => x.ROI).Take(resultLenght).ToList();
+   
                 if(bestPercentage.Count == 0)
                 {
                     result = arcs.FirstOrDefault();
                 }
                 else
-                {                    
-                    //fix para arcos repetidos                    
-
+                {                                    
                     if (travel.Count > 1)
                     {
                         var lastNodes = travel.Reverse().Take(2).ToList();
@@ -260,10 +256,7 @@ namespace ConsoleTpMetaheuristica.Services
               && !(truck.Capacity < graphEnvironment.MinimumDemand
               && truck.ActualNode == 1))
             {
-                var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs, truck.Travel, truck, graphEnvironment.MinimumDemand);
-                //Console.WriteLine("\n");
-                //Console.WriteLine("Arco seleccionado:");
-                //bestArc.Print();
+                var bestArc = this.GetBestsArcsWithRandomPercentage(availableArcs, truck.Travel, truck, graphEnvironment.MinimumDemand);              
                 graphEnvironment.AccumulatedProfit += truck.AddToTravel(bestArc);
             }
             else

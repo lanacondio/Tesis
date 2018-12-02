@@ -19,6 +19,7 @@ namespace ConsoleTpTesis.Models
             {
                 arcs.Add(new Arc()
                 {
+                    Id = arc.Id,
                     Cost = arc.Cost,
                     Demand = arc.Demand,
                     first = arc.first,

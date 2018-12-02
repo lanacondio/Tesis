@@ -1,10 +1,6 @@
 ﻿using ConsoleTpMetaheuristica.Services;
 using ConsoleTpTesis.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleTpMetaheuristica
 {
@@ -26,8 +22,6 @@ namespace ConsoleTpMetaheuristica
                 GraspService GraspService = new GraspService();
 
                 var result = GraspService.GetResult(environment);
-                //Console.WriteLine("\n");
-                //Console.WriteLine("Accumulated Profit: " + environment.AccumulatedProfit.ToString());
                 Console.WriteLine("Original Environment:");
                 Console.WriteLine("--------------------\n");
                 result[0].PrintResume();
