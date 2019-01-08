@@ -11,5 +11,6 @@ namespace ConsoleTpTesis.Models
         public int Id { get; set; }
         public int ShortestRoute { get; set; }
         public Node ShortestPredecesor { get; set; }
+        public List<int> Distances { get; set; }
     }
 }

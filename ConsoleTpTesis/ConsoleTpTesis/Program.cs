@@ -19,6 +19,10 @@ namespace ConsoleTpMetaheuristica
             {
                 var environment = ParseService.ParseInput(path);
                 DijkstraShortestRouteService.CalculateShortestRoute(environment.Graph);
+
+                FloydWarshallShortestRouteService.CalculateShortestRoute(environment.Graph);
+                
+
                 GraspService GraspService = new GraspService();
 
                 var result = GraspService.GetResult(environment);

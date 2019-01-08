@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Arc.cs" />
+    <Compile Include="Models\FloydWarshall.cs" />
     <Compile Include="Models\Dijkstra.cs" />
     <Compile Include="Models\GraphEnvironmet.cs" />
     <Compile Include="Models\Graph.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DijkstraShortestRouteService.cs" />
+    <Compile Include="Services\FloydWarshallShortestRouteService.cs" />
     <Compile Include="Services\GraspService.cs" />
     <Compile Include="Services\LocalSearchWorker.cs" />
     <Compile Include="Services\ParseService.cs" />

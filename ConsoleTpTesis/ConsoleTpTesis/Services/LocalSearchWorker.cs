@@ -210,9 +210,46 @@ namespace ConsoleTpTesis.Services
 
         private IList<Arc> GetRoadFromTo(Node first, Node second, Graph graph)
         {
-            return DijkstraShortestRouteService.CalculateRoadFromTo(first, second, graph);
+            //return DijkstraShortestRouteService.CalculateRoadFromTo(first, second, graph);
+            return this.CalculateRoadFromTo(first, second, graph);
         }
 
+        private IList<Arc> CalculateRoadFromTo(Node first, Node second, Graph graph)
+        {
+            //revisar
+            var result = new List<Arc>();
+            var end = false;
+            var actualNode = first;
+
+            while (!end)
+            {
+                var availableArcs = graph.Arcs.Where(x => x.first.Id == actualNode.Id || x.second.Id == actualNode.Id).ToList();
+
+                var bestArc = availableArcs.FirstOrDefault();
+                var minDistance = bestArc.first.Id == first.Id ? bestArc.second.Distances[second.Id] :
+                     bestArc.first.Distances[second.Id];
+
+                for (int i = 0; i < availableArcs.Count(); i++)
+                {
+                    var actualDistance = availableArcs[i].first.Id == first.Id ?
+                        availableArcs[i].second.Distances[second.Id] :
+                        availableArcs[i].first.Distances[second.Id];
+
+                    if (actualDistance < minDistance)
+                    {
+                        minDistance = actualDistance;
+                        bestArc = availableArcs[i];
+                    }
+                }
+
+                result.Add(bestArc);
+                actualNode = bestArc.first.Id == actualNode.Id ? bestArc.second : bestArc.first;
+
+                if (actualNode.Id == second.Id) end = true;
+            }
+
+            return result;
+        }
 
         private List<int> GetArcsIndexBetween(int fstIndex,int sndIndex)
         {
