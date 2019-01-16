@@ -221,19 +221,21 @@ namespace ConsoleTpTesis.Services
             var end = false;
             var actualNode = first;
 
+            if (second.Id == 1) return result;
+
             while (!end)
             {
                 var availableArcs = graph.Arcs.Where(x => x.first.Id == actualNode.Id || x.second.Id == actualNode.Id).ToList();
 
                 var bestArc = availableArcs.FirstOrDefault();
-                var minDistance = bestArc.first.Id == first.Id ? bestArc.second.Distances[second.Id] :
-                     bestArc.first.Distances[second.Id];
+                var minDistance = bestArc.first.Id == actualNode.Id ? bestArc.second.Distances[second.Id-1] :
+                     bestArc.first.Distances[second.Id-1];
 
                 for (int i = 0; i < availableArcs.Count(); i++)
                 {
-                    var actualDistance = availableArcs[i].first.Id == first.Id ?
-                        availableArcs[i].second.Distances[second.Id] :
-                        availableArcs[i].first.Distances[second.Id];
+                    var actualDistance = availableArcs[i].first.Id == actualNode.Id ?
+                        availableArcs[i].second.Distances[second.Id-1] :
+                        availableArcs[i].first.Distances[second.Id-1];
 
                     if (actualDistance < minDistance)
                     {
@@ -243,6 +245,12 @@ namespace ConsoleTpTesis.Services
                 }
 
                 result.Add(bestArc);
+
+                if((bestArc.first.Id == actualNode.Id && bestArc.second.Distances[second.Id-1] >= actualNode.Distances[second.Id - 1])
+                    ||
+                    (bestArc.second.Id == actualNode.Id && bestArc.first.Distances[second.Id - 1] >= actualNode.Distances[second.Id - 1])
+                    ) { return new List<Arc>(); }
+
                 actualNode = bestArc.first.Id == actualNode.Id ? bestArc.second : bestArc.first;
 
                 if (actualNode.Id == second.Id) end = true;

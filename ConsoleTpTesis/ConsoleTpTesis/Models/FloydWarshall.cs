@@ -77,7 +77,7 @@ namespace ConsoleTpTesis.Models
             }
 
 
-                for (int i= 0; i<verticesCount; i++)
+            for (int i= 0; i<verticesCount; i++)
             {
                 graph.Nodes[i].Distances = new List<int>();
                 for(int j=0; j < verticesCount; j++)
