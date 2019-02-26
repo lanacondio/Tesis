@@ -42,116 +42,147 @@ namespace ConsoleTpTesis.Services
 
         public GraphEnvironment MakeLocalSolution(GraphEnvironment environment, int originalCapacity, int originalTimeLimit)
         {
-            var result = environment.Clone();
-
-            var auxtrucks = new List<Truck>();
-            foreach(var truck in environment.Trucks)
+            try
             {
-                var arcsTravel = new List<Arc>();
-                foreach(var arc in truck.ArcsTravel)
+                var result = environment.Clone();
+
+                var auxtrucks = new List<Truck>();
+                foreach (var truck in environment.Trucks)
                 {
-                    arcsTravel.Add(arc);
+                    var travel = new List<Node>();
+                    var arcsTravel = new List<Arc>();
+                    foreach (var arc in truck.ArcsTravel)
+                    {
+                        arcsTravel.Add(arc);
+                    }
+
+                    foreach (var node in truck.Travel)
+                    {
+                        travel.Add(node);
+                    }
+
+                    var auxTruck = new Truck()
+                    {
+                        ActualNode = 1,
+                        ArcsTravel = arcsTravel,
+                        Capacity = originalCapacity,
+                        Id = truck.Id,
+                        IsFinished = truck.IsFinished,
+                        TimeLimit = originalTimeLimit,
+                        Travel = travel
+                    };
+
+                    //auxTruck.Travel.Add(truck.Travel.Where(y => y.Id == auxTruck.ActualNode).FirstOrDefault());
+                    auxtrucks.Add(auxTruck);
+
                 }
 
-                var auxTruck = new Truck()
+                result.Trucks = auxtrucks;
+                var randomTruck = result.Trucks[r.Next(0, environment.Trucks.Count)];
+
+                /*agregar logica de nodos*/
+                /*elijo el 1ero al azar*/
+                var firstRandomNodeIndex = r.Next(0, randomTruck.Travel.Count);
+
+                /*elijo el segundo entre los que no estan dentro del viaje*/
+                var notSelectedNodes = environment.Graph.Nodes.Where(x => !randomTruck.Travel.Contains(x))
+                                        .ToList();
+
+                var secondRandomNodeIndex = r.Next(0, notSelectedNodes.Count);
+
+
+
+                /*
+
+                var firstRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
+                var secondRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
+
+                //ver que pasa con pocos arcos
+                while(secondRandomArcIndex == firstRandomArcIndex)
                 {
-                    ActualNode = 1,
-                    ArcsTravel = arcsTravel,
-                    Capacity = originalCapacity,
-                    Id = truck.Id,
-                    IsFinished = truck.IsFinished,
-                    TimeLimit = originalTimeLimit,
-                    Travel = new List<Node>()
-                };
+                    secondRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
+                }
 
-                auxTruck.Travel.Add(truck.Travel.Where(y => y.Id == auxTruck.ActualNode).FirstOrDefault());
-                auxtrucks.Add(auxTruck);
+                if(secondRandomArcIndex < firstRandomArcIndex)
+                {
+                    var auxidx = firstRandomArcIndex;
+                    firstRandomArcIndex = secondRandomArcIndex;
+                    secondRandomArcIndex = auxidx;
+                }
 
-            }
+                var indexesToRemove = GetArcsIndexBetween(firstRandomArcIndex,
+                    secondRandomArcIndex);
 
-            result.Trucks = auxtrucks;
-            var randomTruck = result.Trucks[r.Next(0, environment.Trucks.Count)];
+                //var randomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
 
-            var firstRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
-            var secondRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
+                //if(randomArcIndex == 0 || randomArcIndex == randomTruck.ArcsTravel.Count - 1)
+                //{
+                //    return null;
+                //}
 
-            //ver que pasa con pocos arcos
-            while(secondRandomArcIndex == firstRandomArcIndex)
-            {
-                secondRandomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
-            }
+                //var randomArc = randomTruck.ArcsTravel[randomArcIndex];
+                //revisar caso de arcos repetidos, hay q revisar de cual viene realmente
+                */
+                var startNode = randomTruck.Travel[firstRandomNodeIndex]; //GetStartNodeFrom(firstRandomArcIndex, randomTruck.ArcsTravel);
+                var endNode = notSelectedNodes[secondRandomNodeIndex]; // GetEndNodeFrom(secondRandomArcIndex, randomTruck.ArcsTravel);
 
-            if(secondRandomArcIndex < firstRandomArcIndex)
-            {
-                var auxidx = firstRandomArcIndex;
-                firstRandomArcIndex = secondRandomArcIndex;
-                secondRandomArcIndex = auxidx;
-            }
+                var auxTravel = new List<Arc>();
 
-            var indexesToRemove = GetArcsIndexBetween(firstRandomArcIndex,
-                secondRandomArcIndex);
-
-            //var randomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
-
-            //if(randomArcIndex == 0 || randomArcIndex == randomTruck.ArcsTravel.Count - 1)
-            //{
-            //    return null;
-            //}
-
-            //var randomArc = randomTruck.ArcsTravel[randomArcIndex];
-            //revisar caso de arcos repetidos, hay q revisar de cual viene realmente
-            var startNode = GetStartNodeFrom(firstRandomArcIndex, randomTruck.ArcsTravel);
-            var endNode = GetEndNodeFrom(secondRandomArcIndex, randomTruck.ArcsTravel);
-
-            var auxTravel = new List<Arc>();
-
-            for(int i=0; i< randomTruck.ArcsTravel.Count; i++)
-            {
-                if (!(indexesToRemove.Contains(i)))
+                for (int i = 0; i < firstRandomNodeIndex - 1; i++)
                 {
                     auxTravel.Add(randomTruck.ArcsTravel[i]);
                 }
+
+
+                //randomTruck.ArcsTravel = auxTravel;
+                //indexesToRemove.ForEach(x => randomTruck.ArcsTravel.RemoveAt(x));
+                //randomTruck.ArcsTravel.RemoveAt(randomArcIndex);
+
+                //devolver lista de arcos con camino de first a second
+
+                //IList<Arc> newRoad = this.GetRoadFromTo(randomTruck.Travel[firstRandomNodeIndex],
+                //    randomTruck.Travel[secondRandomNodeIndex],environment.Graph);
+                IList<Arc> newRoad = this.GetRoadFromTo(startNode, endNode, environment.Graph);
+                IList<Arc> newReturnRoad = this.GetRoadFromTo(endNode, environment.Graph.Nodes.Where(x => x.Id == 1).FirstOrDefault(), environment.Graph);
+
+                if (newRoad.Count == 0) { return null; }
+
+                var firstRoad = auxTravel;
+                var sndRoad = newRoad;
+                var thirdRoad = newReturnRoad;
+
+                var otherList = new List<Arc>();
+
+                foreach (var arc in firstRoad)
+                {
+                    otherList.Add(arc);
+                }
+
+                foreach (var arc in sndRoad)
+                {
+                    otherList.Add(arc);
+                }
+
+                foreach (var arc in thirdRoad)
+                {
+                    otherList.Add(arc);
+                }
+
+                randomTruck.ArcsTravel = otherList;
+
+                result.Trucks.ToList().ForEach(x => this.RemakeNodeTravel(x));
+
+                //checkear environment
+                if (!IsFeasible(result)) { result = null; }
+
+                return result;
+
+            }
+            catch(Exception ex)
+            {
+                return null;
             }
             
-            //randomTruck.ArcsTravel = auxTravel;
-            //indexesToRemove.ForEach(x => randomTruck.ArcsTravel.RemoveAt(x));
-            //randomTruck.ArcsTravel.RemoveAt(randomArcIndex);
-
-            //devolver lista de arcos con camino de first a second
-
-            //IList<Arc> newRoad = this.GetRoadFromTo(randomTruck.Travel[firstRandomNodeIndex],
-            //    randomTruck.Travel[secondRandomNodeIndex],environment.Graph);
-            IList<Arc> newRoad = this.GetRoadFromTo(startNode, endNode, environment.Graph);
-
-            if (newRoad.Count == 0) { return null; }
-
-            var firstRoad = randomTruck.ArcsTravel.Take(indexesToRemove.First());
-            var sndRoad = randomTruck.ArcsTravel.Skip(indexesToRemove.Last());
-
-            var otherList = new List<Arc>();
-            foreach(var arc in firstRoad)
-            {
-                otherList.Add(arc);
-            }
-
-            foreach (var arc in newRoad)
-            {
-                otherList.Add(arc);
-            }
-
-            foreach (var arc in sndRoad)
-            {
-                otherList.Add(arc);
-            }
-            
-            randomTruck.ArcsTravel = otherList;
-
-            result.Trucks.ToList().ForEach(x => this.RemakeNodeTravel(x));
-            
-            //checkear environment
-            if (!IsFeasible(result)) { result = null; }
-
-            return result;
             
         }
 

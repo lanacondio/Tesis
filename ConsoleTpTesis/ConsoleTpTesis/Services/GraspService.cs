@@ -66,7 +66,7 @@ namespace ConsoleTpMetaheuristica.Services
 
             var resultIndex = results.IndexOf(results.Where(x => x.AccumulatedProfit == results.Max(y => y.AccumulatedProfit)).FirstOrDefault());
 
-            backupResult[resultIndex].SimulateTravel(origGraph, originalCapacity, originalTimeLimit);
+            //backupResult[resultIndex].SimulateTravel(origGraph, originalCapacity, originalTimeLimit);
             resultList.Add(backupResult[resultIndex]);
            // results[resultIndex].Trucks.ToList().ForEach(x => this.RemakeNodeTravel(x));
             resultList.Add(results[resultIndex]);

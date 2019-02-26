@@ -1,0 +1,21 @@
+1- revisar floyd (problema con los indices)  (ver x q falta toda una columna)
+
+2- revisar si usa la lista taboo ()
+
+3- cambiar la generacion de semillas por floyd (como ?)
+
+4- cambiar concepto de vecindad
+	tomar aleatoriamente un nodo de corte
+	random para elegir algun nodo no tomado aun
+	llegar por floyd
+	a partir de ahi volver por dikjstra
+
+
+5- cambiar concepto de vecindad
+	agregar random por tiempo disponible cuando hago el corte del camino
+	agrego lista taboo para que no elija los que ya pertenecian al camino
+	vuelvo por dikjstra
+
+
+6-	generar semillas eligiendo un nodo inicial al azar
+ 	y luego aplicadno el greedy actual 

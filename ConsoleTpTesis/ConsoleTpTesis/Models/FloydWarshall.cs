@@ -39,22 +39,32 @@ namespace ConsoleTpTesis.Models
         {
             int[,] distance = new int[verticesCount, verticesCount];
 
-            for (int i = 0; i < verticesCount; ++i)
-                for (int j = 0; j < verticesCount; ++j)
-                {
-                    var arc = graph.Arcs.Where(x => (x.first.Id == i && x.second.Id == j)
-                    || (x.first.Id == j && x.second.Id == i)).FirstOrDefault();
+            try
+            {
+                for (int i = 0; i < verticesCount; ++i)
+                    for (int j = 0; j < verticesCount; ++j)
+                    {
+                        var arc = graph.Arcs.Where(x => (x.first.Id-1 == i && x.second.Id-1 == j)
+                        || (x.first.Id-1 == j && x.second.Id-1 == i)).FirstOrDefault();
 
-                    if(arc != null)
-                    {
-                        distance[i, j] = arc.Cost;
+                        if (arc != null)
+                        {
+                            distance[i, j] = arc.Cost;
+                        }
+                        else
+                        {
+                            distance[i, j] = INF;
+                        }
                     }
-                    else
-                    {
-                        distance[i, j] = INF;
-                    }
-                }
-                    
+
+
+
+            }
+            catch (Exception ex)
+            {
+                var a = ex.Message;
+            }
+
                     
                     //ver con  null
                 
