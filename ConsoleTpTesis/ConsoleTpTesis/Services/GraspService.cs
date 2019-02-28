@@ -38,7 +38,7 @@ namespace ConsoleTpMetaheuristica.Services
 
             foreach(var env in seedsResult)
             {                
-                this.MakeSeedResult(env);
+                this.MakeSeedResult(env, originalCapacity, originalTimeLimit);
                 backupResult.Add(env.CloneWithTravel());
             }
 
@@ -124,7 +124,7 @@ namespace ConsoleTpMetaheuristica.Services
             return diferences.Average();
         }
 
-        private void MakeSeedResult(GraphEnvironment environment)
+        private void MakeSeedResult(GraphEnvironment environment, int originalCapacity, int originalTimeLimit)
         {
             var profit = 0;
 
@@ -132,18 +132,31 @@ namespace ConsoleTpMetaheuristica.Services
             
             var trucksToRoad = environment.Trucks;
 
-            while (!Finished)
+            foreach (var truck in trucksToRoad)
             {
-                foreach (var truck in trucksToRoad)
+                var resultMaked = false;
+                while (!resultMaked)
                 {
-                    this.MakeNextStep(truck, environment);
-                    //truck.PrintStatus();
+                    var selectedObjetiveIndex = 0;
+                    while(selectedObjetiveIndex == 0) { selectedObjetiveIndex = r.Next(environment.Graph.Nodes.Count); }
+
+                    var selectedObjetive = environment.Graph.Nodes[selectedObjetiveIndex];
+                    var auxWorker = new LocalSearchWorker(null, null, 0, 0);
+                    var initialRoute = auxWorker.GetRoadFromTo(environment.Graph.Nodes.Where(x=> x.Id == 1).FirstOrDefault(), selectedObjetive, environment.Graph, true);
+                    var returnRoute = auxWorker.GetRoadFromTo(selectedObjetive, environment.Graph.Nodes.Where(x => x.Id == 1).FirstOrDefault(), environment.Graph, true);
+                    var route = initialRoute.Concat(returnRoute).ToList();
+                    truck.ArcsTravel = route;
+                    auxWorker.RemakeNodeTravel(truck);
+                    resultMaked = auxWorker.IsValidTravel(truck, environment);
                 }
 
-                CheckStatus(trucksToRoad);
             }
-            
+
+            environment.SimulateTravel(environment.Graph,originalCapacity,originalTimeLimit);
         }
+
+
+
 
         private void CheckStatus(IList<Truck> trucks)
         {

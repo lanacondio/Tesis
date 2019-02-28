@@ -142,8 +142,8 @@ namespace ConsoleTpTesis.Services
 
                 //IList<Arc> newRoad = this.GetRoadFromTo(randomTruck.Travel[firstRandomNodeIndex],
                 //    randomTruck.Travel[secondRandomNodeIndex],environment.Graph);
-                IList<Arc> newRoad = this.GetRoadFromTo(startNode, endNode, environment.Graph);
-                IList<Arc> newReturnRoad = this.GetRoadFromTo(endNode, environment.Graph.Nodes.Where(x => x.Id == 1).FirstOrDefault(), environment.Graph);
+                IList<Arc> newRoad = this.GetRoadFromTo(startNode, endNode, environment.Graph, false);
+                IList<Arc> newReturnRoad = this.GetRoadFromTo(endNode, environment.Graph.Nodes.Where(x => x.Id == 1).FirstOrDefault(), environment.Graph, false);
 
                 if (newRoad.Count == 0) { return null; }
 
@@ -239,20 +239,21 @@ namespace ConsoleTpTesis.Services
         }
 
 
-        private IList<Arc> GetRoadFromTo(Node first, Node second, Graph graph)
+        public IList<Arc> GetRoadFromTo(Node first, Node second, Graph graph, bool isSeed)
         {
             //return DijkstraShortestRouteService.CalculateRoadFromTo(first, second, graph);
-            return this.CalculateRoadFromTo(first, second, graph);
+            return this.CalculateRoadFromTo(first, second, graph, isSeed);
         }
 
-        private IList<Arc> CalculateRoadFromTo(Node first, Node second, Graph graph)
+        private IList<Arc> CalculateRoadFromTo(Node first, Node second, Graph graph, bool isSeed)
         {
             //revisar
             var result = new List<Arc>();
             var end = false;
             var actualNode = first;
 
-            if (second.Id == 1) return result;
+            if(!isSeed && second.Id == 1)
+                return result;
 
             while (!end)
             {
@@ -304,7 +305,7 @@ namespace ConsoleTpTesis.Services
             return result;
         }
 
-        private bool IsFeasible(GraphEnvironment environment)
+        public bool IsFeasible(GraphEnvironment environment)
         {
             var result = true;
             
@@ -316,7 +317,7 @@ namespace ConsoleTpTesis.Services
             return result;
         }
 
-        private bool IsValidTravel(Truck truck,  GraphEnvironment environment)
+        public bool IsValidTravel(Truck truck,  GraphEnvironment environment)
         {
 
             var totalcost = truck.ArcsTravel.Sum(x => x.Cost);
@@ -354,7 +355,7 @@ namespace ConsoleTpTesis.Services
             return result;
         }
 
-        private void RemakeNodeTravel(Truck truck)
+        public void RemakeNodeTravel(Truck truck)
         {
 
             var result = new List<Node>();
