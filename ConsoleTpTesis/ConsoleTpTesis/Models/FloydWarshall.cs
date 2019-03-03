@@ -42,10 +42,10 @@ namespace ConsoleTpTesis.Models
             for (int i = 0; i < verticesCount; ++i)
                 for (int j = 0; j < verticesCount; ++j)
                 {
-                    var arc = graph.Arcs.Where(x => (x.first.Id == i && x.second.Id == j)
-                    || (x.first.Id == j && x.second.Id == i)).FirstOrDefault();
+                    var arc = graph.Arcs.Where(x => (x.first.Id - 1 == i && x.second.Id - 1 == j)
+                    || (x.first.Id - 1 == j && x.second.Id - 1 == i)).FirstOrDefault();
 
-                    if(arc != null)
+                    if (arc != null)
                     {
                         distance[i, j] = arc.Cost;
                     }
@@ -54,10 +54,10 @@ namespace ConsoleTpTesis.Models
                         distance[i, j] = INF;
                     }
                 }
-                    
-                    
-                    //ver con  null
-                
+
+
+            //ver con  null
+
             for (int k = 0; k < verticesCount; ++k)
             {
                 for (int i = 0; i < verticesCount; ++i)
@@ -77,16 +77,16 @@ namespace ConsoleTpTesis.Models
             }
 
 
-            for (int i= 0; i<verticesCount; i++)
+            for (int i = 0; i < verticesCount; i++)
             {
                 graph.Nodes[i].Distances = new List<int>();
-                for(int j=0; j < verticesCount; j++)
+                for (int j = 0; j < verticesCount; j++)
                 {
                     graph.Nodes[i].Distances.Add(distance[i, j]);
                 }
 
             }
-            
+
         }
 
     };
