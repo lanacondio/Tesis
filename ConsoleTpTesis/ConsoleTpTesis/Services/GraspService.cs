@@ -52,14 +52,6 @@ namespace ConsoleTpMetaheuristica.Services
                 results.Add(worker.resultSeed);
             }
 
-
-            //Parallel.ForEach(seedsResult, (actualSeed) =>
-            //{
-            //    var worker = new LocalSearchWorker(actualSeed);
-            //    worker.Run();
-
-            //    results.Add(worker.resultSeed);
-            //});
             var average = getAverageDiference(results, backupResult);
             Console.WriteLine("\nAverage diference percentage: " + average.ToString()+"%\n");
             var resultList = new List<GraphEnvironment>();
@@ -67,48 +59,13 @@ namespace ConsoleTpMetaheuristica.Services
             var resultIndex = results.IndexOf(results.Where(x => x.AccumulatedProfit == results.Max(y => y.AccumulatedProfit)).FirstOrDefault());
 
             backupResult[resultIndex].SimulateTravel(origGraph, originalCapacity, originalTimeLimit);
-            resultList.Add(backupResult[resultIndex]);
-           // results[resultIndex].Trucks.ToList().ForEach(x => this.RemakeNodeTravel(x));
+            resultList.Add(backupResult[resultIndex]);        
             resultList.Add(results[resultIndex]);
             return resultList;
             
         }
 
-        //private void RemakeNodeTravel(Truck truck)
-        //{
-
-        //     var result = new List<Node>();
-
-        //    Node last = null;
-        //    var isFirst = true;
-        //    truck.ArcsTravel.ForEach(x =>
-        //    {
-        //        if (isFirst)
-        //        {
-        //            result.Add(x.first);
-        //            result.Add(x.second);
-        //            last = x.second;
-        //            isFirst = false;
-        //        }
-        //        else
-        //        {
-        //            if (last.Id == x.first.Id)
-        //            {
-        //                result.Add(x.second);
-        //                last = x.second;
-        //            }
-        //            else
-        //            {
-        //                result.Add(x.first);
-        //                last = x.first;
-        //            }
-        //        }
-
-        //    });
-
-        //    truck.Travel = result;
-
-        //}
+        
 
         private decimal getAverageDiference(List<GraphEnvironment> results, List<GraphEnvironment> backupResult)
         {
@@ -136,8 +93,7 @@ namespace ConsoleTpMetaheuristica.Services
             {
                 foreach (var truck in trucksToRoad)
                 {
-                    this.MakeNextStep(truck, environment);
-                    //truck.PrintStatus();
+                    this.MakeNextStep(truck, environment);                    
                 }
 
                 CheckStatus(trucksToRoad);

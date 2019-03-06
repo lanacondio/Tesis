@@ -56,8 +56,7 @@ namespace ConsoleTpTesis.Models
                 }
 
 
-            //ver con  null
-
+            
             for (int k = 0; k < verticesCount; ++k)
             {
                 for (int i = 0; i < verticesCount; ++i)
@@ -69,8 +68,7 @@ namespace ConsoleTpTesis.Models
                     }
                 }
             }
-
-            //revisar
+            
             for (int k = 0; k < verticesCount; ++k)
             {
                 distance[k, k] = 0;
