@@ -13,14 +13,18 @@ namespace ConsoleTpMetaheuristica.Services
     {
         private static bool Finished { get; set; }        
         private static Random r = new Random();
+        private SortedList<string, string> tabooList = new SortedList<string, string>();
+
         public List<GraphEnvironment> GetResult(GraphEnvironment environment)
         {
             var results = new List<GraphEnvironment>();
             this.CalculateInitialROI(environment);
             
             var seedsQuantity = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
+            var maxSeedIteration = int.Parse(ConfigurationManager.AppSettings["MaxSeedIteration"]);
 
             var seedsResult = new List<GraphEnvironment>();
+            var finalSeedsResult = new List<GraphEnvironment>();
             var backupResult = new List<GraphEnvironment>();
             var originalGraphs = new Queue<Graph>();
             var originalCapacity = environment.Trucks.FirstOrDefault().Capacity;
@@ -37,13 +41,27 @@ namespace ConsoleTpMetaheuristica.Services
             }
 
             foreach(var env in seedsResult)
-            {                
-                this.MakeSeedResult(env);
-                backupResult.Add(env.CloneWithTravel());
+            {
+                var isNew = false;
+                var auxEnv = env.Clone();
+                var iterNumber = 0;
+                while (!isNew && iterNumber < maxSeedIteration)
+                {                    
+                    this.MakeSeedResult(env);
+                    isNew = this.CheckTabu(env);
+                    iterNumber++;
+                }
+
+                if (isNew)
+                {
+                    finalSeedsResult.Add(env);
+                    backupResult.Add(env.CloneWithTravel());
+                }
+                
             }
 
 
-            foreach (var actualSeed in seedsResult)             
+            foreach (var actualSeed in finalSeedsResult)             
             {
                 //pasar un clon del grafo inicial porque los arcos viajan con profit en 0
                 var worker = new LocalSearchWorker(actualSeed, originalGraphs.Dequeue(), originalCapacity, originalTimeLimit);
@@ -226,6 +244,16 @@ namespace ConsoleTpMetaheuristica.Services
         private IList<Arc> GetNextArcs(int nodeId, IList<Arc> arcs)
         {
             return arcs.Where(x => x.first.Id == nodeId || x.second.Id == nodeId).ToList();
+        }
+
+        private bool CheckTabu(GraphEnvironment environment)
+        {
+            var key = environment.Trucks.Select(x => string.Join("", x.Travel.Select(y => y.Id).ToArray())).ToList().Aggregate((i, j) => i + j);
+            
+            var result = !tabooList.Keys.Contains(key);
+            if (result) { tabooList.Add(key, key); } 
+
+            return result;
         }
 
     }
