@@ -1,7 +1,0 @@
-C:\Users\lanacondio\Documents\facu\facu\ConsoleTpMetaheuristica\ConsoleTpMetaheuristica\bin\Debug\ConsoleTpMetaheuristica.exe.config
-C:\Users\lanacondio\Documents\facu\facu\ConsoleTpMetaheuristica\ConsoleTpMetaheuristica\bin\Debug\ConsoleTpMetaheuristica.exe
-C:\Users\lanacondio\Documents\facu\facu\ConsoleTpMetaheuristica\ConsoleTpMetaheuristica\bin\Debug\ConsoleTpMetaheuristica.pdb
-C:\Users\lanacondio\Documents\facu\facu\ConsoleTpMetaheuristica\ConsoleTpMetaheuristica\obj\Debug\ConsoleTpMetaheuristica.csprojResolveAssemblyReference.cache
-C:\Users\lanacondio\Documents\facu\facu\ConsoleTpMetaheuristica\ConsoleTpMetaheuristica\obj\Debug\ConsoleTpMetaheuristica.csproj.CoreCompileInputs.cache
-C:\Users\lanacondio\Documents\facu\facu\ConsoleTpMetaheuristica\ConsoleTpMetaheuristica\obj\Debug\ConsoleTpMetaheuristica.exe
-C:\Users\lanacondio\Documents\facu\facu\ConsoleTpMetaheuristica\ConsoleTpMetaheuristica\obj\Debug\ConsoleTpMetaheuristica.pdb
