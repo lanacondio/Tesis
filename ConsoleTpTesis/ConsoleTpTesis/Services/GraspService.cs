@@ -75,7 +75,7 @@ namespace ConsoleTpMetaheuristica.Services
             var resultList = new List<GraphEnvironment>();
 
             var resultIndex = results.IndexOf(results.Where(x => x.AccumulatedProfit == results.Max(y => y.AccumulatedProfit)).FirstOrDefault());
-
+            
             // No se sabe porque esta - backupResult[resultIndex].SimulateTravel(origGraph, originalCapacity, originalTimeLimit);
             resultList.Add(backupResult[resultIndex]);        
             resultList.Add(results[resultIndex]);
@@ -92,7 +92,11 @@ namespace ConsoleTpMetaheuristica.Services
             for (int i= 0; i< results.Count; i++)
             {
                 var diference = results[i].AccumulatedProfit - backupResult[i].AccumulatedProfit;
-                var diferencePercentage = diference * 100 / results[i].AccumulatedProfit;
+                var diferencePercentage = 0;
+                if (results[i].AccumulatedProfit > 0)
+                {
+                    diferencePercentage = diference * 100 / results[i].AccumulatedProfit;
+                }                
                 diferences.Add(diferencePercentage);
             }
 
