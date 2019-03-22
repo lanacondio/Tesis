@@ -60,7 +60,7 @@ namespace ConsoleTpMetaheuristica.Services
                 
             }
 
-            Console.WriteLine("Semillas finales creadas: " + finalSeedsResult.Count.ToString());
+            Console.WriteLine("\nSemillas finales creadas: " + finalSeedsResult.Count.ToString());
             foreach (var actualSeed in finalSeedsResult)             
             {
                 //pasar un clon del grafo inicial porque los arcos viajan con profit en 0

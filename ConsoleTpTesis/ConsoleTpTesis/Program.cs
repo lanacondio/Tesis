@@ -34,13 +34,14 @@ namespace ConsoleTpMetaheuristica
                 Console.WriteLine("------------\n");
                 result[1].PrintResume();
 
+                /*
                 Console.WriteLine("Floyd:");
 
                 foreach (var node in result[1].Graph.Nodes)
                 {
                     Console.WriteLine(String.Join(",", node.Distances));
                 }
-                
+                */
 
                 Console.ReadLine();
             }

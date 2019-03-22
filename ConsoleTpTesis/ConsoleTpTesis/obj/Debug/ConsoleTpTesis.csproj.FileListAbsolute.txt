@@ -11,3 +11,4 @@ C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\obj\Debug\Cons
 C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\obj\Debug\ConsoleTpTesis.csproj.CoreCompileInputs.cache
 C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\obj\Debug\ConsoleTpTesis.exe
 C:\Users\lanacondio\Documents\Tesis\ConsoleTpTesis\ConsoleTpTesis\obj\Debug\ConsoleTpTesis.pdb
+D:\Users\Adrian\Documents\Facultad\Tesis\Repo\Local-Search-Varios-Arcos\Tesis\ConsoleTpTesis\ConsoleTpTesis\obj\Debug\ConsoleTpTesis.csprojResolveAssemblyReference.cache
