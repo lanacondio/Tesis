@@ -18,14 +18,15 @@ namespace ConsoleTpMetaheuristica.Services
         public List<GraphEnvironment> GetResult(GraphEnvironment environment)
         {
             var results = new List<GraphEnvironment>();
+            var seedsResult = new List<GraphEnvironment>();
+            var finalSeedsResult = new List<GraphEnvironment>();
+            var backupResult = new List<GraphEnvironment>();
+
             this.CalculateInitialROI(environment);
             
             var seedsQuantity = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
             var maxSeedIteration = int.Parse(ConfigurationManager.AppSettings["MaxSeedIteration"]);
-
-            var seedsResult = new List<GraphEnvironment>();
-            var finalSeedsResult = new List<GraphEnvironment>();
-            var backupResult = new List<GraphEnvironment>();
+            
             var originalGraphs = new Queue<Graph>();
             var originalCapacity = environment.Trucks.FirstOrDefault().Capacity;
             var originalTimeLimit = environment.Trucks.FirstOrDefault().TimeLimit;
@@ -37,7 +38,6 @@ namespace ConsoleTpMetaheuristica.Services
                 var auxGraph = environment.Graph.Clone();
                 seedsResult.Add(auxEnv);
                 originalGraphs.Enqueue(auxGraph);
-
             }
 
             foreach(var env in seedsResult)
@@ -74,9 +74,18 @@ namespace ConsoleTpMetaheuristica.Services
             Console.WriteLine("\nAverage diference percentage: " + average.ToString()+"%\n");
             var resultList = new List<GraphEnvironment>();
 
-            var resultIndex = results.IndexOf(results.Where(x => x.AccumulatedProfit == results.Max(y => y.AccumulatedProfit)).FirstOrDefault());
-            
+            var resultIndex = 0;
+            for(int i = 0; i<results.Count; i++)
+            {
+                if(results[i].AccumulatedProfit > results[resultIndex].AccumulatedProfit)
+                {
+                    resultIndex = i;
+                }
+            }
+
+            //var resultIndex = results.IndexOf(results.Where(x => x.AccumulatedProfit == results.Max(y => y.AccumulatedProfit)).FirstOrDefault());            
             // No se sabe porque esta - backupResult[resultIndex].SimulateTravel(origGraph, originalCapacity, originalTimeLimit);
+
             resultList.Add(backupResult[resultIndex]);        
             resultList.Add(results[resultIndex]);
             return resultList;
