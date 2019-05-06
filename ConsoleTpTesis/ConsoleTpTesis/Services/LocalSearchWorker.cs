@@ -33,9 +33,9 @@ namespace ConsoleTpTesis.Services
                 if(localSolution != null)
                 {
                     localSolution.SimulateTravel(this.originalGraph, this.originalCapacity, this.originalTimeLimit);
+                    if (localSolution.IsBetter(resultSeed)) resultSeed = localSolution;
                 }
-
-                if (localSolution != null && localSolution.IsBetter(resultSeed)) resultSeed = localSolution;                
+                
             }
             
         }
@@ -45,7 +45,10 @@ namespace ConsoleTpTesis.Services
             var result = environment.Clone();
 
             var auxtrucks = new List<Truck>();
-            foreach(var truck in environment.Trucks)
+            var auxTravel = new List<Arc>();
+            var otherList = new List<Arc>();
+
+            foreach (var truck in environment.Trucks)
             {
                 var arcsTravel = new List<Arc>();
                 foreach(var arc in truck.ArcsTravel)
@@ -91,20 +94,10 @@ namespace ConsoleTpTesis.Services
             var indexesToRemove = GetArcsIndexBetween(firstRandomArcIndex,
                 secondRandomArcIndex);
 
-            //var randomArcIndex = r.Next(0, randomTruck.ArcsTravel.Count);
-
-            //if(randomArcIndex == 0 || randomArcIndex == randomTruck.ArcsTravel.Count - 1)
-            //{
-            //    return null;
-            //}
-
-            //var randomArc = randomTruck.ArcsTravel[randomArcIndex];
             //revisar caso de arcos repetidos, hay q revisar de cual viene realmente
             var startNode = GetStartNodeFrom(firstRandomArcIndex, randomTruck.ArcsTravel);
             var endNode = GetEndNodeFrom(secondRandomArcIndex, randomTruck.ArcsTravel);
-
-            var auxTravel = new List<Arc>();
-
+            
             for(int i=0; i< randomTruck.ArcsTravel.Count; i++)
             {
                 if (!(indexesToRemove.Contains(i)))
@@ -113,14 +106,6 @@ namespace ConsoleTpTesis.Services
                 }
             }
             
-            //randomTruck.ArcsTravel = auxTravel;
-            //indexesToRemove.ForEach(x => randomTruck.ArcsTravel.RemoveAt(x));
-            //randomTruck.ArcsTravel.RemoveAt(randomArcIndex);
-
-            //devolver lista de arcos con camino de first a second
-
-            //IList<Arc> newRoad = this.GetRoadFromTo(randomTruck.Travel[firstRandomNodeIndex],
-            //    randomTruck.Travel[secondRandomNodeIndex],environment.Graph);
             IList<Arc> newRoad = this.GetRoadFromTo(startNode, endNode, environment.Graph);
 
             if (newRoad.Count == 0) { return null; }
@@ -128,8 +113,7 @@ namespace ConsoleTpTesis.Services
             var firstRoad = randomTruck.ArcsTravel.Take(indexesToRemove.First());
             var sndRoad = randomTruck.ArcsTravel.Skip(indexesToRemove.Last());
 
-            var otherList = new List<Arc>();
-            foreach(var arc in firstRoad)
+            foreach (var arc in firstRoad)
             {
                 otherList.Add(arc);
             }
@@ -350,7 +334,7 @@ namespace ConsoleTpTesis.Services
                     {
                         result.Add(x.first);
                         last = x.first;
-                    }
+                    }   
                 }
 
             });

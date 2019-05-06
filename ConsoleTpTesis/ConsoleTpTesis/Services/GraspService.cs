@@ -21,13 +21,13 @@ namespace ConsoleTpMetaheuristica.Services
             var seedsResult = new List<GraphEnvironment>();
             var finalSeedsResult = new List<GraphEnvironment>();
             var backupResult = new List<GraphEnvironment>();
+            var originalGraphs = new Queue<Graph>();
 
             this.CalculateInitialROI(environment);
             
             var seedsQuantity = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
             var maxSeedIteration = int.Parse(ConfigurationManager.AppSettings["MaxSeedIteration"]);
-            
-            var originalGraphs = new Queue<Graph>();
+                        
             var originalCapacity = environment.Trucks.FirstOrDefault().Capacity;
             var originalTimeLimit = environment.Trucks.FirstOrDefault().TimeLimit;
             var origGraph = environment.Graph.Clone();
@@ -40,38 +40,20 @@ namespace ConsoleTpMetaheuristica.Services
                 originalGraphs.Enqueue(auxGraph);
             }
 
-            foreach(var env in seedsResult)
-            {
-                var isNew = false;
-                var auxEnv = env.Clone();
-                var iterNumber = 0;
-                while (!isNew && iterNumber < maxSeedIteration)
-                {                    
-                    this.MakeSeedResult(env);
-                    isNew = this.CheckTabu(env);
-                    iterNumber++;
-                }
-
-                if (isNew)
-                {
-                    finalSeedsResult.Add(env);
-                    backupResult.Add(env.CloneWithTravel());
-                }
-                
-            }
+            this.MakeSeeds(seedsResult, finalSeedsResult, backupResult, maxSeedIteration);
 
             Console.WriteLine("\nSemillas finales creadas: " + finalSeedsResult.Count.ToString());
-            foreach (var actualSeed in finalSeedsResult)             
+
+            Parallel.ForEach(finalSeedsResult, actualSeed =>
             {
                 //pasar un clon del grafo inicial porque los arcos viajan con profit en 0
                 var worker = new LocalSearchWorker(actualSeed, originalGraphs.Dequeue(), originalCapacity, originalTimeLimit);
                 worker.Run();
 
                 results.Add(worker.resultSeed);
-            }
-
-            var average = getAverageDiference(results, backupResult);
-            Console.WriteLine("\nAverage diference percentage: " + average.ToString()+"%\n");
+            });
+            
+            var average = getAverageDiference(results, backupResult);            
             var resultList = new List<GraphEnvironment>();
 
             var resultIndex = 0;
@@ -82,10 +64,7 @@ namespace ConsoleTpMetaheuristica.Services
                     resultIndex = i;
                 }
             }
-
-            //var resultIndex = results.IndexOf(results.Where(x => x.AccumulatedProfit == results.Max(y => y.AccumulatedProfit)).FirstOrDefault());            
-            // No se sabe porque esta - backupResult[resultIndex].SimulateTravel(origGraph, originalCapacity, originalTimeLimit);
-
+            
             resultList.Add(backupResult[resultIndex]);        
             resultList.Add(results[resultIndex]);
             return resultList;
@@ -93,6 +72,29 @@ namespace ConsoleTpMetaheuristica.Services
         }
 
         
+        private void MakeSeeds(List<GraphEnvironment> seedsResult, List<GraphEnvironment> finalSeedsResult, List<GraphEnvironment> backupResult, int maxSeedIteration)
+        {
+            foreach (var env in seedsResult)
+            {
+                var isNew = false;
+                var auxEnv = env.Clone();
+                var iterNumber = 0;
+                while (!isNew && iterNumber < maxSeedIteration)
+                {
+                    this.MakeSeedResult(env);
+                    isNew = this.CheckTabu(env);
+                    iterNumber++;
+                }
+
+                if (isNew)
+                {
+                    finalSeedsResult.Add(env);
+                    backupResult.Add(env.CloneWithTravel());
+                }
+
+            }
+        }
+
 
         private decimal getAverageDiference(List<GraphEnvironment> results, List<GraphEnvironment> backupResult)
         {
@@ -114,10 +116,7 @@ namespace ConsoleTpMetaheuristica.Services
 
         private void MakeSeedResult(GraphEnvironment environment)
         {
-            var profit = 0;
-
             Finished = false;
-            
             var trucksToRoad = environment.Trucks;
 
             while (!Finished)
@@ -258,6 +257,7 @@ namespace ConsoleTpMetaheuristica.Services
         {
             return arcs.Where(x => x.first.Id == nodeId || x.second.Id == nodeId).ToList();
         }
+
 
         private bool CheckTabu(GraphEnvironment environment)
         {
