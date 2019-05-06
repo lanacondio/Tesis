@@ -18,11 +18,11 @@ namespace ConsoleTpMetaheuristica
             try
             {
                 var environment = ParseService.ParseInput(path);
+
                 DijkstraShortestRouteService.CalculateShortestRoute(environment.Graph);
 
                 FloydWarshallShortestRouteService.CalculateShortestRoute(environment.Graph);
                 
-
                 GraspService GraspService = new GraspService();
 
                 var result = GraspService.GetResult(environment);
@@ -33,15 +33,6 @@ namespace ConsoleTpMetaheuristica
                 Console.WriteLine("Final Result:");
                 Console.WriteLine("------------\n");
                 result[1].PrintResume();
-
-                /*
-                Console.WriteLine("Floyd:");
-
-                foreach (var node in result[1].Graph.Nodes)
-                {
-                    Console.WriteLine(String.Join(",", node.Distances));
-                }
-                */
 
                 Console.ReadLine();
             }
