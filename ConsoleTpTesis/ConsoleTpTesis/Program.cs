@@ -26,13 +26,13 @@ namespace ConsoleTpMetaheuristica
                 GraspService GraspService = new GraspService();
 
                 var result = GraspService.GetResult(environment);
-                Console.WriteLine("Original Environment:");
+                Console.WriteLine("Result Environment:");
                 Console.WriteLine("--------------------\n");
-                result[0].PrintResume();
+                result.PrintResume();
                 
-                Console.WriteLine("Final Result:");
-                Console.WriteLine("------------\n");
-                result[1].PrintResume();
+                //Console.WriteLine("Final Result:");
+                //Console.WriteLine("------------\n");
+                //result[1].PrintResume();
 
                 Console.ReadLine();
             }

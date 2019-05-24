@@ -15,7 +15,7 @@ namespace ConsoleTpMetaheuristica.Services
         private static Random r = new Random();
         private SortedList<string, string> tabooList = new SortedList<string, string>();
 
-        public List<GraphEnvironment> GetResult(GraphEnvironment environment)
+        public GraphEnvironment GetResult(GraphEnvironment environment)
         {
             var results = new List<GraphEnvironment>();
             var seedsResult = new List<GraphEnvironment>();
@@ -27,74 +27,57 @@ namespace ConsoleTpMetaheuristica.Services
             
             var seedsQuantity = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
             var maxSeedIteration = int.Parse(ConfigurationManager.AppSettings["MaxSeedIteration"]);
-                        
+            var ImprovementIterationPercentage = int.Parse(ConfigurationManager.AppSettings["ImprovementIterationPercentage"]); 
+
             var originalCapacity = environment.Trucks.FirstOrDefault().Capacity;
             var originalTimeLimit = environment.Trucks.FirstOrDefault().TimeLimit;
-            var origGraph = environment.Graph.Clone();
+            var originalGraph = environment.Graph.Clone();
 
-            for (int i = 0; i<seedsQuantity; i++)
+            
+            var greedyEnv = environment.Clone();
+            var auxGraph = environment.Graph.Clone();
+
+            var endIterations = false;
+            this.MakeSeedResult(greedyEnv);
+
+            while (!endIterations)
             {
                 var auxEnv = environment.Clone();
-                var auxGraph = environment.Graph.Clone();
-                seedsResult.Add(auxEnv);
-                originalGraphs.Enqueue(auxGraph);
-            }
-
-            this.MakeSeeds(seedsResult, finalSeedsResult, backupResult, maxSeedIteration);
-
-            Console.WriteLine("\nSemillas finales creadas: " + finalSeedsResult.Count.ToString());
-
-            Parallel.ForEach(finalSeedsResult, actualSeed =>
-            {
-                //pasar un clon del grafo inicial porque los arcos viajan con profit en 0
-                var worker = new LocalSearchWorker(actualSeed, originalGraphs.Dequeue(), originalCapacity, originalTimeLimit);
-                worker.Run();
-
-                results.Add(worker.resultSeed);
-            });
-            
-            var average = getAverageDiference(results, backupResult);            
-            var resultList = new List<GraphEnvironment>();
-
-            var resultIndex = 0;
-            for(int i = 0; i<results.Count; i++)
-            {
-                if(results[i].AccumulatedProfit > results[resultIndex].AccumulatedProfit)
+                this.MakeSeedResult(auxEnv);
+                var environmentsImprovement = CalculateImprovement(greedyEnv, auxEnv);
+                if (environmentsImprovement < ImprovementIterationPercentage)
                 {
-                    resultIndex = i;
+                    endIterations = true;
+                }
+                else
+                {
+                    greedyEnv = auxEnv;
                 }
             }
             
-            resultList.Add(backupResult[resultIndex]);        
-            resultList.Add(results[resultIndex]);
-            return resultList;
-            
+            Console.WriteLine("\n fin de generación de paso greedy: ");
+
+            var worker = new LocalSearchWorker(greedyEnv, originalGraph, originalCapacity, originalTimeLimit);
+            worker.Run();
+
+            results.Add(worker.resultSeed);
+            return worker.resultSeed;
+                        
         }
 
-        
-        private void MakeSeeds(List<GraphEnvironment> seedsResult, List<GraphEnvironment> finalSeedsResult, List<GraphEnvironment> backupResult, int maxSeedIteration)
+
+        private double CalculateImprovement(GraphEnvironment originalEnv, GraphEnvironment newEnv)
         {
-            foreach (var env in seedsResult)
+            var result = 0;
+            if(originalEnv.AccumulatedProfit < newEnv.AccumulatedProfit)
             {
-                var isNew = false;
-                var auxEnv = env.Clone();
-                var iterNumber = 0;
-                while (!isNew && iterNumber < maxSeedIteration)
-                {
-                    this.MakeSeedResult(env);
-                    isNew = this.CheckTabu(env);
-                    iterNumber++;
-                }
-
-                if (isNew)
-                {
-                    finalSeedsResult.Add(env);
-                    backupResult.Add(env.CloneWithTravel());
-                }
-
+                var difference = newEnv.AccumulatedProfit - originalEnv.AccumulatedProfit;
+                result = difference * 100 / originalEnv.AccumulatedProfit;
             }
-        }
 
+            return result;
+        }
+        
 
         private decimal getAverageDiference(List<GraphEnvironment> results, List<GraphEnvironment> backupResult)
         {

@@ -26,19 +26,73 @@ namespace ConsoleTpTesis.Services
         public void Run()
         {
             var maxIterations = int.Parse(ConfigurationManager.AppSettings["MaxIterations"]);
+            var ImprovementIterationPercentage = int.Parse(ConfigurationManager.AppSettings["ImprovementIterationPercentage"]);
 
-            for (int j = 0; j < maxIterations; j++)
+            var endIterations = false;
+            var localSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
+            var iteractioncount = 0;
+            while (localSolution == null && iteractioncount < maxIterations) //poner limite de iteraciones para null
             {
-                var localSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
-                if(localSolution != null)
-                {
-                    localSolution.SimulateTravel(this.originalGraph, this.originalCapacity, this.originalTimeLimit);
-                    if (localSolution.IsBetter(resultSeed)) resultSeed = localSolution;
-                }
-                
+                localSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
+                iteractioncount++;
             }
+
+            if (localSolution != null)
+            {
+                localSolution.SimulateTravel(this.originalGraph, this.originalCapacity, this.originalTimeLimit);
+                
+                while (!endIterations)
+                {
+                    var auxLocalSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
+                    iteractioncount = 0;
+                    while (auxLocalSolution == null && iteractioncount < maxIterations)
+                    {
+                        auxLocalSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
+                        iteractioncount++;
+                    }
+
+                    if (auxLocalSolution != null)
+                    {
+                        auxLocalSolution.SimulateTravel(this.originalGraph, this.originalCapacity, this.originalTimeLimit);
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                    var environmentsImprovement = CalculateImprovement(localSolution, auxLocalSolution);
+                    if (environmentsImprovement < ImprovementIterationPercentage)
+                    {
+                        endIterations = true;
+                    }
+                    else
+                    {
+                        localSolution = auxLocalSolution;
+                    }
+                }
+
+                resultSeed = localSolution;
+            }
+
+           
+           
             
         }
+
+
+        private double CalculateImprovement(GraphEnvironment originalEnv, GraphEnvironment newEnv)
+        {
+            var result = 0;
+            if (originalEnv.AccumulatedProfit < newEnv.AccumulatedProfit)
+            {
+                var difference = newEnv.AccumulatedProfit - originalEnv.AccumulatedProfit;
+                result = difference * 100 / originalEnv.AccumulatedProfit;
+            }
+
+            return result;
+        }
+
+
 
         public GraphEnvironment MakeLocalSolution(GraphEnvironment environment, int originalCapacity, int originalTimeLimit)
         {
