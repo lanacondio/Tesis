@@ -25,7 +25,7 @@ namespace ConsoleTpMetaheuristica.Services
 
             this.CalculateInitialROI(environment);
             
-            var seedsQuantity = int.Parse(ConfigurationManager.AppSettings["MaxSeeds"]);
+            
             var maxSeedIteration = int.Parse(ConfigurationManager.AppSettings["MaxSeedIteration"]);
             var ImprovementIterationPercentage = int.Parse(ConfigurationManager.AppSettings["ImprovementIterationPercentage"]); 
 
@@ -36,38 +36,48 @@ namespace ConsoleTpMetaheuristica.Services
             
             var greedyEnv = environment.Clone();
             var auxGraph = environment.Graph.Clone();
-
-            var endIterations = false;
+            
             var iterationCount = 0;
+            var finalIterationCount = 0;
 
             this.MakeSeedResult(greedyEnv);
+            this.CheckTabu(greedyEnv);
 
-            while (!endIterations && iterationCount < seedsQuantity)
+            while (iterationCount < maxSeedIteration)
             {
-                var auxEnv = environment.Clone();
-                this.MakeSeedResult(auxEnv);
+                var isnew = false;
+                var auxEnv = new GraphEnvironment();
+
+                while (!isnew)
+                {
+                    auxEnv = environment.Clone();
+                    this.MakeSeedResult(auxEnv);
+                    isnew = this.CheckTabu(auxEnv);
+                }
+                
                 //revisar
-                var worker = new LocalSearchWorker(greedyEnv, originalGraph, originalCapacity, originalTimeLimit);
+                var worker = new LocalSearchWorker(auxEnv, originalGraph, originalCapacity, originalTimeLimit);
                 worker.Run();
 
+                var environmentsImprovement = CalculateImprovement(greedyEnv, worker.resultSeed);
 
-                var environmentsImprovement = CalculateImprovement(greedyEnv, auxEnv);
-                if (environmentsImprovement < ImprovementIterationPercentage)
+                if (greedyEnv.AccumulatedProfit < worker.resultSeed.AccumulatedProfit)
                 {
-                    endIterations = true;
+                    greedyEnv = worker.resultSeed;
                 }
-                else
+
+                if (environmentsImprovement >= ImprovementIterationPercentage)
                 {
-                    greedyEnv = auxEnv;
+                    finalIterationCount = iterationCount;
+                    iterationCount = 0;
                 }
+                iterationCount++;
             }
-            
-            Console.WriteLine("\n fin de generación de paso greedy: ");
 
-            
+            greedyEnv.SeedsCount = finalIterationCount + iterationCount;
 
-            results.Add(worker.resultSeed);
-            return worker.resultSeed;
+            //results.Add(greedyEnv);
+            return greedyEnv;
                         
         }
 

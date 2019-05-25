@@ -28,12 +28,12 @@ namespace ConsoleTpMetaheuristica
                 var result = GraspService.GetResult(environment);
                 Console.WriteLine("Result Environment:");
                 Console.WriteLine("--------------------\n");
+                Console.WriteLine("Total de semillas generadas:");
+                Console.WriteLine(result.SeedsCount);
+                Console.WriteLine("Total de busquedas locales:");
+                Console.WriteLine(result.LocalIterationsCount);
                 result.PrintResume();
                 
-                //Console.WriteLine("Final Result:");
-                //Console.WriteLine("------------\n");
-                //result[1].PrintResume();
-
                 Console.ReadLine();
             }
             catch (Exception ex)

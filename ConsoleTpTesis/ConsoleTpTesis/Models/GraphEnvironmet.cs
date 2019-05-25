@@ -8,6 +8,8 @@ namespace ConsoleTpTesis.Models
 {
     public class GraphEnvironment
     {
+        public int SeedsCount { get; set; }
+        public int LocalIterationsCount { get; set; }
         public Graph Graph { get; set; }
         public IList<Truck> Trucks { get; set; }
 

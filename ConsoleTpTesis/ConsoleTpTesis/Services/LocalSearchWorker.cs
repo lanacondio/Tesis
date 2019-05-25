@@ -27,18 +27,18 @@ namespace ConsoleTpTesis.Services
         {
             var maxIterations = int.Parse(ConfigurationManager.AppSettings["MaxIterations"]);
             var ImprovementIterationPercentage = int.Parse(ConfigurationManager.AppSettings["ImprovementIterationPercentage"]);
-
-            var endIterations = false;
+            
             var localSolution = this.resultSeed;
-            var iteractioncount = 0;
+            var iterationcount = 0;
+            var localIterationcount = 0;
 
-            while (!endIterations && iteractioncount < maxIterations)
+            while (iterationcount < maxIterations)
             {
                 var auxLocalSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
-                while (auxLocalSolution == null && iteractioncount < maxIterations)
+                while (auxLocalSolution == null && iterationcount < maxIterations)
                 {
                     auxLocalSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
-                    iteractioncount++;
+                    iterationcount++;
                 }
 
                 if (auxLocalSolution != null)
@@ -53,22 +53,20 @@ namespace ConsoleTpTesis.Services
                 var environmentsImprovement = CalculateImprovement(localSolution, auxLocalSolution);
 
                 if (localSolution.AccumulatedProfit < auxLocalSolution.AccumulatedProfit)
-                {
+                {                    
                     localSolution = auxLocalSolution;
                 }
 
                 if (environmentsImprovement >= ImprovementIterationPercentage)
                 {
-                    iteractioncount = 0;
+                    localIterationcount += iterationcount;
+                    iterationcount = 0;
                 }
-                
+                iterationcount++;
             }
 
-
+            localSolution.LocalIterationsCount = localIterationcount + iterationcount;            
             resultSeed = localSolution;
-           
-           
-           
             
         }
 
