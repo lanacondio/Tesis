@@ -38,12 +38,19 @@ namespace ConsoleTpMetaheuristica.Services
             var auxGraph = environment.Graph.Clone();
 
             var endIterations = false;
+            var iterationCount = 0;
+
             this.MakeSeedResult(greedyEnv);
 
-            while (!endIterations)
+            while (!endIterations && iterationCount < seedsQuantity)
             {
                 var auxEnv = environment.Clone();
                 this.MakeSeedResult(auxEnv);
+                //revisar
+                var worker = new LocalSearchWorker(greedyEnv, originalGraph, originalCapacity, originalTimeLimit);
+                worker.Run();
+
+
                 var environmentsImprovement = CalculateImprovement(greedyEnv, auxEnv);
                 if (environmentsImprovement < ImprovementIterationPercentage)
                 {
@@ -57,8 +64,7 @@ namespace ConsoleTpMetaheuristica.Services
             
             Console.WriteLine("\n fin de generación de paso greedy: ");
 
-            var worker = new LocalSearchWorker(greedyEnv, originalGraph, originalCapacity, originalTimeLimit);
-            worker.Run();
+            
 
             results.Add(worker.resultSeed);
             return worker.resultSeed;

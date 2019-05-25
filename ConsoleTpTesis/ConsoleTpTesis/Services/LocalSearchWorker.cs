@@ -29,51 +29,44 @@ namespace ConsoleTpTesis.Services
             var ImprovementIterationPercentage = int.Parse(ConfigurationManager.AppSettings["ImprovementIterationPercentage"]);
 
             var endIterations = false;
-            var localSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
+            var localSolution = this.resultSeed;
             var iteractioncount = 0;
-            while (localSolution == null && iteractioncount < maxIterations) //poner limite de iteraciones para null
-            {
-                localSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
-                iteractioncount++;
-            }
 
-            if (localSolution != null)
+            while (!endIterations && iteractioncount < maxIterations)
             {
-                localSolution.SimulateTravel(this.originalGraph, this.originalCapacity, this.originalTimeLimit);
-                
-                while (!endIterations)
+                var auxLocalSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
+                while (auxLocalSolution == null && iteractioncount < maxIterations)
                 {
-                    var auxLocalSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
-                    iteractioncount = 0;
-                    while (auxLocalSolution == null && iteractioncount < maxIterations)
-                    {
-                        auxLocalSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
-                        iteractioncount++;
-                    }
-
-                    if (auxLocalSolution != null)
-                    {
-                        auxLocalSolution.SimulateTravel(this.originalGraph, this.originalCapacity, this.originalTimeLimit);
-                    }
-                    else
-                    {
-                        break;
-                    }
-
-                    var environmentsImprovement = CalculateImprovement(localSolution, auxLocalSolution);
-                    if (environmentsImprovement < ImprovementIterationPercentage)
-                    {
-                        endIterations = true;
-                    }
-                    else
-                    {
-                        localSolution = auxLocalSolution;
-                    }
+                    auxLocalSolution = this.MakeLocalSolution(resultSeed, originalCapacity, originalTimeLimit);
+                    iteractioncount++;
                 }
 
-                resultSeed = localSolution;
+                if (auxLocalSolution != null)
+                {
+                    auxLocalSolution.SimulateTravel(this.originalGraph, this.originalCapacity, this.originalTimeLimit);
+                }
+                else
+                {
+                    break;
+                }
+                
+                var environmentsImprovement = CalculateImprovement(localSolution, auxLocalSolution);
+
+                if (localSolution.AccumulatedProfit < auxLocalSolution.AccumulatedProfit)
+                {
+                    localSolution = auxLocalSolution;
+                }
+
+                if (environmentsImprovement >= ImprovementIterationPercentage)
+                {
+                    iteractioncount = 0;
+                }
+                
             }
 
+
+            resultSeed = localSolution;
+           
            
            
             
