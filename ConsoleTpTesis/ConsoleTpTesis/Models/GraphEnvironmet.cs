@@ -10,6 +10,7 @@ namespace ConsoleTpTesis.Models
     {
         public int SeedsCount { get; set; }
         public int LocalIterationsCount { get; set; }
+        public int LocalIterationsAverage { get; set; }
         public Graph Graph { get; set; }
         public IList<Truck> Trucks { get; set; }
 

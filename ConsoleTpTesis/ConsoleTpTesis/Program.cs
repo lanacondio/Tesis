@@ -32,6 +32,8 @@ namespace ConsoleTpMetaheuristica
                 Console.WriteLine(result.SeedsCount);
                 Console.WriteLine("Total de busquedas locales:");
                 Console.WriteLine(result.LocalIterationsCount);
+                Console.WriteLine("Promedio de busquedas locales:");
+                Console.WriteLine(result.LocalIterationsAverage);
                 result.PrintResume();
                 
                 Console.ReadLine();

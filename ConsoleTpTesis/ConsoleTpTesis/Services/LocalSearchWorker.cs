@@ -29,6 +29,8 @@ namespace ConsoleTpTesis.Services
             var ImprovementIterationPercentage = int.Parse(ConfigurationManager.AppSettings["ImprovementIterationPercentage"]);
             
             var localSolution = this.resultSeed;
+            localSolution.SimulateTravel(this.originalGraph, this.originalCapacity, this.originalTimeLimit);
+
             var iterationcount = 0;
             var localIterationcount = 0;
 

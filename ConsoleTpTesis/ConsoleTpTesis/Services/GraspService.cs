@@ -39,6 +39,7 @@ namespace ConsoleTpMetaheuristica.Services
             
             var iterationCount = 0;
             var finalIterationCount = 0;
+            var localIterationAverage = 0;
 
             this.MakeSeedResult(greedyEnv);
             this.CheckTabu(greedyEnv);
@@ -61,6 +62,8 @@ namespace ConsoleTpMetaheuristica.Services
 
                 var environmentsImprovement = CalculateImprovement(greedyEnv, worker.resultSeed);
 
+                localIterationAverage += worker.resultSeed.LocalIterationsCount;
+
                 if (greedyEnv.AccumulatedProfit < worker.resultSeed.AccumulatedProfit)
                 {
                     greedyEnv = worker.resultSeed;
@@ -74,9 +77,11 @@ namespace ConsoleTpMetaheuristica.Services
                 iterationCount++;
             }
 
-            greedyEnv.SeedsCount = finalIterationCount + iterationCount;
 
-            //results.Add(greedyEnv);
+            greedyEnv.SeedsCount = finalIterationCount + iterationCount;
+            localIterationAverage = localIterationAverage / greedyEnv.SeedsCount;
+            greedyEnv.LocalIterationsAverage = localIterationAverage;
+            
             return greedyEnv;
                         
         }
