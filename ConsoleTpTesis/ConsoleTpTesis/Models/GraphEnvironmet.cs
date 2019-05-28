@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleTpTesis.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -124,10 +125,11 @@ namespace ConsoleTpTesis.Models
         public void PrintResume()
         {
 
-            Console.WriteLine("Camiones:\n");
-            this.Trucks.ToList().ForEach(x => x.PrintStatus());
-            Console.WriteLine("Profit:"+ this.AccumulatedProfit.ToString());
-            Console.WriteLine("\n==========\n");
+            GraphPrinterService.Print(this);
+            //Console.WriteLine("Camiones:\n");
+            //this.Trucks.ToList().ForEach(x => x.PrintStatus());
+            //Console.WriteLine("Profit:"+ this.AccumulatedProfit.ToString());
+            //Console.WriteLine("\n==========\n");
 
         }
 
