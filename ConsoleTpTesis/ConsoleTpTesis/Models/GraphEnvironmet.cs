@@ -1,6 +1,7 @@
 ﻿using ConsoleTpTesis.Services;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -124,12 +125,20 @@ namespace ConsoleTpTesis.Models
 
         public void PrintResume()
         {
+            var printGraph = bool.Parse(ConfigurationManager.AppSettings["PrintGraph"]);
 
-            GraphPrinterService.Print(this);
-            //Console.WriteLine("Camiones:\n");
-            //this.Trucks.ToList().ForEach(x => x.PrintStatus());
-            //Console.WriteLine("Profit:"+ this.AccumulatedProfit.ToString());
-            //Console.WriteLine("\n==========\n");
+            if (printGraph)
+            {
+                GraphPrinterService.Print(this);
+            }
+            else
+            {
+                Console.WriteLine("Camiones:\n");
+                this.Trucks.ToList().ForEach(x => x.PrintStatus());
+                Console.WriteLine("Profit:"+ this.AccumulatedProfit.ToString());
+                Console.WriteLine("\n==========\n");
+            }
+
 
         }
 

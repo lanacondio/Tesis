@@ -34,8 +34,12 @@ namespace ConsoleTpMetaheuristica
                 Console.WriteLine(result.LocalIterationsCount);
                 Console.WriteLine("Promedio de busquedas locales:");
                 Console.WriteLine(result.LocalIterationsAverage);
+                Console.WriteLine("Acumulated Profit:");
+                Console.WriteLine(result.AccumulatedProfit);
+
+
                 result.PrintResume();
-                
+
                 Console.ReadLine();
             }
             catch (Exception ex)
