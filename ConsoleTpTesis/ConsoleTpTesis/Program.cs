@@ -1,6 +1,7 @@
 ﻿using ConsoleTpMetaheuristica.Services;
 using ConsoleTpTesis.Services;
 using System;
+using System.Configuration;
 
 namespace ConsoleTpMetaheuristica
 {
@@ -28,19 +29,22 @@ namespace ConsoleTpMetaheuristica
                 var result = GraspService.GetResult(environment);
                 Console.WriteLine("Result Environment:");
                 Console.WriteLine("--------------------\n");
-                Console.WriteLine("Total de semillas generadas:");
-                Console.WriteLine(result.SeedsCount);
-                Console.WriteLine("Total de busquedas locales:");
-                Console.WriteLine(result.LocalIterationsCount);
-                Console.WriteLine("Promedio de busquedas locales:");
-                Console.WriteLine(result.LocalIterationsAverage);
-                Console.WriteLine("Acumulated Profit:");
-                Console.WriteLine(result.AccumulatedProfit);
+                Console.WriteLine("Total de semillas generadas:"+ result.SeedsCount.ToString());
+                Console.WriteLine("Total de busquedas locales:"+ result.LocalIterationsCount.ToString());                
+                Console.WriteLine("Promedio de busquedas locales:"+ result.LocalIterationsAverage.ToString());                
+                Console.WriteLine("Acumulated Profit:"+ result.AccumulatedProfit.ToString());
 
+                var waitenter = bool.Parse(ConfigurationManager.AppSettings["WaitEnter"]);
 
                 result.PrintResume();
 
-                Console.ReadLine();
+                if (waitenter)
+                {
+                    Console.ReadLine();
+                }
+                
+
+                
             }
             catch (Exception ex)
             {

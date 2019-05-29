@@ -126,19 +126,15 @@ namespace ConsoleTpTesis.Models
         public void PrintResume()
         {
             var printGraph = bool.Parse(ConfigurationManager.AppSettings["PrintGraph"]);
+            Console.WriteLine("Camiones:\n");
+            this.Trucks.ToList().ForEach(x => x.PrintStatus());
+            Console.WriteLine("Profit:" + this.AccumulatedProfit.ToString());
+            Console.WriteLine("\n==========\n");
 
             if (printGraph)
             {
                 GraphPrinterService.Print(this);
-            }
-            else
-            {
-                Console.WriteLine("Camiones:\n");
-                this.Trucks.ToList().ForEach(x => x.PrintStatus());
-                Console.WriteLine("Profit:"+ this.AccumulatedProfit.ToString());
-                Console.WriteLine("\n==========\n");
-            }
-
+            }            
 
         }
 
