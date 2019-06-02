@@ -79,7 +79,7 @@ namespace ConsoleTpMetaheuristica.Services
 
                 if (environmentsImprovement >= ImprovementIterationPercentage)
                 {
-                    finalIterationCount = iterationCount;
+                    finalIterationCount += iterationCount;
                     improvementCount++;
                     iterationCount = 0;
                 }
