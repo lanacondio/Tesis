@@ -33,6 +33,7 @@ namespace ConsoleTpTesis.Services
 
             var iterationcount = 0;
             var localIterationcount = 0;
+            var localImprovementcount = 0;
 
             while (iterationcount < maxIterations)
             {
@@ -62,12 +63,14 @@ namespace ConsoleTpTesis.Services
                 if (environmentsImprovement >= ImprovementIterationPercentage)
                 {
                     localIterationcount += iterationcount;
+                    localImprovementcount++;
                     iterationcount = 0;
                 }
                 iterationcount++;
             }
 
-            localSolution.LocalIterationsCount = localIterationcount + iterationcount;            
+            localSolution.LocalIterationsCount = localIterationcount + iterationcount;
+            localSolution.LocalImprovementCount = localImprovementcount;
             resultSeed = localSolution;
             
         }

@@ -10,9 +10,13 @@ namespace ConsoleTpTesis.Models
 {
     public class GraphEnvironment
     {
+        public int SeedsImprovementCount { get; set; }
         public int SeedsCount { get; set; }
         public int LocalIterationsCount { get; set; }
+        public int LocalImprovementCount { get; set; }
         public int LocalIterationsAverage { get; set; }
+        public int LocalIterationsImprovementAverage { get; set; }
+        public int MaxLocalImprovement { get; set; }
         public Graph Graph { get; set; }
         public IList<Truck> Trucks { get; set; }
 

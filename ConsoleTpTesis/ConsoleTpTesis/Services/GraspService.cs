@@ -38,8 +38,11 @@ namespace ConsoleTpMetaheuristica.Services
             var auxGraph = environment.Graph.Clone();
             
             var iterationCount = 0;
+            var improvementCount = 0;
             var finalIterationCount = 0;
             var localIterationAverage = 0;
+            var localIterationImprovementAverage = 0;
+            var maxLocalImprovement = 0;
 
             this.MakeSeedResult(greedyEnv);
             this.CheckTabu(greedyEnv);
@@ -63,6 +66,11 @@ namespace ConsoleTpMetaheuristica.Services
                 var environmentsImprovement = CalculateImprovement(greedyEnv, worker.resultSeed);
 
                 localIterationAverage += worker.resultSeed.LocalIterationsCount;
+                localIterationImprovementAverage += worker.resultSeed.LocalImprovementCount;
+                if(worker.resultSeed.LocalImprovementCount > maxLocalImprovement)
+                {
+                    maxLocalImprovement = worker.resultSeed.LocalImprovementCount;
+                }
 
                 if (greedyEnv.AccumulatedProfit < worker.resultSeed.AccumulatedProfit)
                 {
@@ -72,6 +80,7 @@ namespace ConsoleTpMetaheuristica.Services
                 if (environmentsImprovement >= ImprovementIterationPercentage)
                 {
                     finalIterationCount = iterationCount;
+                    improvementCount++;
                     iterationCount = 0;
                 }
                 iterationCount++;
@@ -81,7 +90,10 @@ namespace ConsoleTpMetaheuristica.Services
             greedyEnv.SeedsCount = finalIterationCount + iterationCount;
             localIterationAverage = localIterationAverage / greedyEnv.SeedsCount;
             greedyEnv.LocalIterationsAverage = localIterationAverage;
-            
+            greedyEnv.SeedsImprovementCount = improvementCount;
+            greedyEnv.LocalIterationsImprovementAverage = localIterationImprovementAverage / greedyEnv.SeedsCount;
+            greedyEnv.MaxLocalImprovement = maxLocalImprovement;
+
             return greedyEnv;
                         
         }

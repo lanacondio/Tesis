@@ -108,8 +108,9 @@ namespace ConsoleTpTesis.Services
         }
 
         private static string  GetTrucksWithArcInTravelLabel(Arc arc,IList<Truck> trucks)
-        {
+        {            
             var result = string.Empty;
+            var description = string.Format("Cost: {0} - Demand: {1}", arc.Cost.ToString(), arc.Demand.ToString());
 
             foreach(var truck in trucks)
             {
@@ -127,7 +128,7 @@ namespace ConsoleTpTesis.Services
             }
 
 
-            return result;
+            return description +"- Trucks:"+result;
         }
 
         private static void PrintNodes(Microsoft.Msagl.Drawing.Graph graph, List<Node> nodes, Microsoft.Msagl.Drawing.Color color)

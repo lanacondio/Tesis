@@ -30,8 +30,11 @@ namespace ConsoleTpMetaheuristica
                 Console.WriteLine("Result Environment:");
                 Console.WriteLine("--------------------\n");
                 Console.WriteLine("Total de semillas generadas:"+ result.SeedsCount.ToString());
+                Console.WriteLine("Total de mejoreas en semillas generadas:" + result.SeedsImprovementCount.ToString());
                 Console.WriteLine("Total de busquedas locales:"+ result.LocalIterationsCount.ToString());                
-                Console.WriteLine("Promedio de busquedas locales:"+ result.LocalIterationsAverage.ToString());                
+                Console.WriteLine("Promedio de busquedas locales:"+ result.LocalIterationsAverage.ToString());
+                Console.WriteLine("Promedio de mejoras locales:" + result.LocalIterationsImprovementAverage.ToString());
+                Console.WriteLine("Maximo de mejoras locales:" + result.MaxLocalImprovement.ToString());
                 Console.WriteLine("Acumulated Profit:"+ result.AccumulatedProfit.ToString());
 
                 var waitenter = bool.Parse(ConfigurationManager.AppSettings["WaitEnter"]);
