@@ -19,12 +19,53 @@ namespace ConsoleTpTesis.Services
             //create a graph object 
             Microsoft.Msagl.Drawing.Graph graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
-
             foreach(var arc in environment.Graph.Arcs)
             {
                 var label = GetTrucksWithArcInTravelLabel(arc, environment.Trucks);
 
-                graph.AddEdge(arc.first.Id.ToString(), label, arc.second.Id.ToString());
+                var edge = graph.AddEdge(arc.first.Id.ToString(), label, arc.second.Id.ToString());
+                edge.Attr.ArrowheadAtSource = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                edge.Attr.ArrowheadAtTarget = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                edge.Attr.LineWidth = 3;                
+
+                for (int i = 0; i< environment.Trucks.Count; i++)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            if(environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
+                            {
+                                edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+                            }
+                            break;
+                        case 1:
+                            if (environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
+                            {
+                                edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Red;
+                            }
+                            break;
+                        case 2:
+                            if (environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
+                            {
+                                edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Blue;
+                            }
+                            break;
+                        case 3:
+                            if (environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
+                            {
+                                edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Beige;
+                            }
+                            break;
+                        case 4:
+                            if (environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
+                            {
+                                edge.Attr.Color = Microsoft.Msagl.Drawing.Color.DarkOrange;                                
+                            }
+                            break;
+                    }
+
+                }
+                
             }
 
             //var graphLabel = MakeGraphLabel(environment);
@@ -45,21 +86,21 @@ namespace ConsoleTpTesis.Services
                 switch (i)
                 {
                     case 0:
-                        PrintNodes(graph, environment.Trucks[i].Travel, Microsoft.Msagl.Drawing.Color.Green);
+                        PrintNodes(graph, environment.Trucks[i].Travel, Microsoft.Msagl.Drawing.Color.Green, Microsoft.Msagl.Drawing.Color.White);
                         break;
                     case 1:
-                        PrintNodes(graph, environment.Trucks[i].Travel, Microsoft.Msagl.Drawing.Color.Red);
+                        PrintNodes(graph, environment.Trucks[i].Travel, Microsoft.Msagl.Drawing.Color.Red, Microsoft.Msagl.Drawing.Color.White);
                         break;
 
                     case 2:
-                        PrintNodes(graph, environment.Trucks[i].Travel, Microsoft.Msagl.Drawing.Color.Blue);
+                        PrintNodes(graph, environment.Trucks[i].Travel, Microsoft.Msagl.Drawing.Color.Blue, Microsoft.Msagl.Drawing.Color.White);
                         break;
 
                     case 3:
-                        PrintNodes(graph, environment.Trucks[i].Travel, Microsoft.Msagl.Drawing.Color.Beige);
+                        PrintNodes(graph, environment.Trucks[i].Travel, Microsoft.Msagl.Drawing.Color.Beige, Microsoft.Msagl.Drawing.Color.PaleGreen);
                         break;
                     case 4:
-                        PrintNodes(graph, environment.Trucks[i].Travel, Microsoft.Msagl.Drawing.Color.DarkOrange);
+                        PrintNodes(graph, environment.Trucks[i].Travel, Microsoft.Msagl.Drawing.Color.DarkOrange, Microsoft.Msagl.Drawing.Color.White);
                         break;
 
                 }
@@ -110,7 +151,7 @@ namespace ConsoleTpTesis.Services
         private static string  GetTrucksWithArcInTravelLabel(Arc arc,IList<Truck> trucks)
         {            
             var result = string.Empty;
-            var description = string.Format("Cost: {0} - Demand: {1}", arc.Cost.ToString(), arc.Demand.ToString());
+            var description = string.Format("Cost: {0} - Demand: {1}", arc.Cost.ToString(), arc.Demand.ToString()) + Environment.NewLine;
 
             foreach(var truck in trucks)
             {
@@ -131,11 +172,18 @@ namespace ConsoleTpTesis.Services
             return description +"- Trucks:"+result;
         }
 
-        private static void PrintNodes(Microsoft.Msagl.Drawing.Graph graph, List<Node> nodes, Microsoft.Msagl.Drawing.Color color)
+        private static void PrintNodes(Microsoft.Msagl.Drawing.Graph graph, List<Node> nodes, Microsoft.Msagl.Drawing.Color color, Microsoft.Msagl.Drawing.Color fontcolor)
         {
             foreach(var node in nodes)
             {
                 graph.FindNode(node.Id.ToString()).Attr.FillColor = color;
+                graph.FindNode(node.Id.ToString()).Attr.Shape = Microsoft.Msagl.Drawing.Shape.Box;
+                graph.FindNode(node.Id.ToString()).Attr.XRadius = 10;
+                graph.FindNode(node.Id.ToString()).Attr.YRadius = 10;
+                graph.FindNode(node.Id.ToString()).Attr.LineWidth = 1;
+                graph.FindNode(node.Id.ToString()).Attr.LabelMargin = 10;
+                //graph.FindNode(node.Id.ToString()).Attr.Padding = 10;
+                graph.FindNode(node.Id.ToString()).Label.FontColor = fontcolor;
             }
 
         }
