@@ -26,40 +26,102 @@ namespace ConsoleTpTesis.Services
                 var edge = graph.AddEdge(arc.first.Id.ToString(), label, arc.second.Id.ToString());
                 edge.Attr.ArrowheadAtSource = Microsoft.Msagl.Drawing.ArrowStyle.None;
                 edge.Attr.ArrowheadAtTarget = Microsoft.Msagl.Drawing.ArrowStyle.None;
-                edge.Attr.LineWidth = 3;                
+                edge.Attr.LineWidth = 3;
 
+                var isUsed = false;
                 for (int i = 0; i< environment.Trucks.Count; i++)
                 {
                     switch (i)
                     {
                         case 0:
-                            if(environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
+                            if (environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
                             {
-                                edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+                                if (!isUsed)
+                                {
+                                    edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+                                    isUsed = true;
+                                }
+                                else
+                                {
+                                    var newedge = graph.AddEdge(arc.first.Id.ToString(), arc.second.Id.ToString());
+                                    newedge.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+                                    newedge.Attr.ArrowheadAtSource = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                                    newedge.Attr.ArrowheadAtTarget = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                                    newedge.Attr.LineWidth = 3;
+                                }
                             }
                             break;
                         case 1:
                             if (environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
                             {
-                                edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Red;
+                                if (!isUsed)
+                                {
+
+                                    edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Red;
+                                    isUsed = true;
+                                }
+                                else
+                                {
+                                    var newedge = graph.AddEdge(arc.first.Id.ToString(), arc.second.Id.ToString());
+                                    newedge.Attr.Color = Microsoft.Msagl.Drawing.Color.Red;
+                                    newedge.Attr.ArrowheadAtSource = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                                    newedge.Attr.ArrowheadAtTarget = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                                    newedge.Attr.LineWidth = 3;
+                                }
                             }
                             break;
                         case 2:
                             if (environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
                             {
-                                edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Blue;
+                                if (!isUsed)
+                                {
+                                    edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Blue;
+                                    isUsed = true;
+                                }
+                                else
+                                {
+                                    var newedge = graph.AddEdge(arc.first.Id.ToString(), arc.second.Id.ToString());
+                                    newedge.Attr.Color = Microsoft.Msagl.Drawing.Color.Blue;
+                                    newedge.Attr.ArrowheadAtSource = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                                    newedge.Attr.ArrowheadAtTarget = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                                    newedge.Attr.LineWidth = 3;
+                                }
                             }
                             break;
                         case 3:
                             if (environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
                             {
-                                edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Beige;
+                                if (!isUsed)
+                                {
+                                    edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Beige;
+                                    isUsed = true;
+                                }
+                                else
+                                {
+                                    var newedge = graph.AddEdge(arc.first.Id.ToString(), arc.second.Id.ToString());
+                                    newedge.Attr.Color = Microsoft.Msagl.Drawing.Color.Beige;
+                                    newedge.Attr.ArrowheadAtSource = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                                    newedge.Attr.ArrowheadAtTarget = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                                    newedge.Attr.LineWidth = 3;
+                                }
                             }
                             break;
                         case 4:
                             if (environment.Trucks[i].ArcsTravel.Where(x => x.Id == arc.Id).FirstOrDefault() != null)
                             {
-                                edge.Attr.Color = Microsoft.Msagl.Drawing.Color.DarkOrange;                                
+                                if (!isUsed)
+                                {
+                                    edge.Attr.Color = Microsoft.Msagl.Drawing.Color.DarkOrange;
+                                    isUsed = true;
+                                }
+                                else
+                                {
+                                    var newedge = graph.AddEdge(arc.first.Id.ToString(), arc.second.Id.ToString());
+                                    newedge.Attr.Color = Microsoft.Msagl.Drawing.Color.DarkOrange;
+                                    newedge.Attr.ArrowheadAtSource = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                                    newedge.Attr.ArrowheadAtTarget = Microsoft.Msagl.Drawing.ArrowStyle.None;
+                                    newedge.Attr.LineWidth = 3;
+                                }
                             }
                             break;
                     }
